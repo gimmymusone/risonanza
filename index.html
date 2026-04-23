@@ -16,19 +16,13 @@
   }
   body { position: relative; }
 
-  /* CIELO DIURNO — soft, ambra sull'orizzonte, azzurro chiaro in alto */
   .sky {
     position: absolute;
     inset: 0;
-    background:
-      linear-gradient(to bottom,
-        #A8C9E6 0%,
-        #C5DCEC 20%,
-        #DEE8EC 35%,
-        #F0E4D0 42%);
+    background: linear-gradient(to bottom,
+      #A8C9E6 0%, #C5DCEC 20%, #DEE8EC 35%, #F0E4D0 42%);
   }
 
-  /* Sole caldo in alto-destra */
   .sun-glow {
     position: absolute;
     top: -20vh;
@@ -43,44 +37,31 @@
     pointer-events: none;
   }
 
-  /* NUVOLE che passano lentissime */
-  .cloud {
-    position: absolute;
-    pointer-events: none;
-    opacity: 0.85;
-  }
+  .cloud { position: absolute; pointer-events: none; opacity: 0.85; }
   @keyframes drift {
     from { transform: translateX(var(--from)); }
     to { transform: translateX(var(--to)); }
   }
-  .cloud-move {
-    animation: drift linear infinite;
-  }
+  .cloud-move { animation: drift linear infinite; }
 
-  /* PAESAGGIO SVG */
   .landscape {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
     pointer-events: none;
   }
 
-  /* Ruscello — onde che pulsano dolcemente */
   @keyframes streamFlow {
-    0%, 100% { opacity: 0.85; }
+    0%, 100% { opacity: 0.88; }
     50% { opacity: 1; }
   }
   .stream-shine { animation: streamFlow 5s ease-in-out infinite; }
 
-  /* Finestre villaggio che pulsano con la luce del giorno */
   @keyframes windowFlicker {
-    0%, 100% { opacity: 0.5; }
-    50% { opacity: 0.9; }
+    0%, 100% { opacity: 0.55; }
+    50% { opacity: 0.95; }
   }
   .window { animation: windowFlicker ease-in-out infinite; }
 
-  /* Grana leggera */
   .grain {
     position: absolute; inset: 0; pointer-events: none; opacity: 0.04;
     mix-blend-mode: multiply;
@@ -88,9 +69,9 @@
   }
 
   .label {
-    position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%);
-    color: rgba(30,50,70,0.35); font-family: Georgia, serif; font-style: italic;
-    font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; z-index: 10;
+    position: absolute; bottom: 10px; right: 14px;
+    color: rgba(30,50,70,0.3); font-family: Georgia, serif; font-style: italic;
+    font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; z-index: 10;
   }
 </style>
 </head>
@@ -98,259 +79,230 @@
   <div class="sky"></div>
   <div class="sun-glow"></div>
 
-  <!-- PAESAGGIO -->
   <svg class="landscape" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
     <defs>
-      <!-- mare lontano -->
       <linearGradient id="seaGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#8FB8D4" stop-opacity="1"/>
-        <stop offset="100%" stop-color="#6A9FC4" stop-opacity="1"/>
+        <stop offset="0%" stop-color="#8FB8D4"/>
+        <stop offset="100%" stop-color="#5A8FB0"/>
       </linearGradient>
-      <!-- ruscello -->
       <linearGradient id="streamGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#CCE4F2" stop-opacity="1"/>
-        <stop offset="50%" stop-color="#8EBCDC" stop-opacity="1"/>
-        <stop offset="100%" stop-color="#5A93BB" stop-opacity="1"/>
+        <stop offset="0%" stop-color="#BEDEEF"/>
+        <stop offset="50%" stop-color="#7AAFCF"/>
+        <stop offset="100%" stop-color="#5089AE"/>
       </linearGradient>
-      <!-- collina villaggio -->
       <linearGradient id="hillGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#A8C088" stop-opacity="1"/>
-        <stop offset="100%" stop-color="#708B58" stop-opacity="1"/>
+        <stop offset="0%" stop-color="#B2CA8E"/>
+        <stop offset="100%" stop-color="#6F8B52"/>
       </linearGradient>
-      <!-- foresta -->
+      <linearGradient id="hillFront" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#92AE72"/>
+        <stop offset="100%" stop-color="#556F40"/>
+      </linearGradient>
       <linearGradient id="forestGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#3A5840" stop-opacity="1"/>
-        <stop offset="100%" stop-color="#1E3224" stop-opacity="1"/>
+        <stop offset="0%" stop-color="#3E5E45"/>
+        <stop offset="100%" stop-color="#1F3428"/>
       </linearGradient>
-      <!-- singolo albero -->
       <linearGradient id="treeGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#4A6F50" stop-opacity="1"/>
-        <stop offset="100%" stop-color="#2A4530" stop-opacity="1"/>
+        <stop offset="0%" stop-color="#52794E"/>
+        <stop offset="100%" stop-color="#2B4530"/>
       </linearGradient>
-      <!-- alone finestra -->
-      <radialGradient id="windowGlow">
-        <stop offset="0%" stop-color="#FFD88A" stop-opacity="1"/>
-        <stop offset="100%" stop-color="#FFD88A" stop-opacity="0"/>
-      </radialGradient>
     </defs>
 
-    <!-- MARE — linea d'orizzonte attorno al 38% -->
-    <rect x="0" y="340" width="1600" height="60" fill="url(#seaGrad)"/>
-    <!-- riflessi sul mare -->
-    <line x1="150" y1="360" x2="260" y2="360" stroke="#DCEEF7" stroke-width="1.2" opacity="0.55"/>
-    <line x1="360" y1="370" x2="440" y2="370" stroke="#DCEEF7" stroke-width="1" opacity="0.45"/>
-    <line x1="600" y1="358" x2="720" y2="358" stroke="#DCEEF7" stroke-width="1.2" opacity="0.55"/>
-    <line x1="880" y1="368" x2="960" y2="368" stroke="#DCEEF7" stroke-width="1" opacity="0.45"/>
-    <line x1="1080" y1="362" x2="1220" y2="362" stroke="#DCEEF7" stroke-width="1.2" opacity="0.5"/>
+    <!-- MARE: fascia tra 360 e 430 -->
+    <rect x="0" y="370" width="1600" height="65" fill="url(#seaGrad)"/>
+    <!-- riflessi mare -->
+    <line x1="120" y1="390" x2="240" y2="390" stroke="#DCEEF7" stroke-width="1.2" opacity="0.5"/>
+    <line x1="340" y1="400" x2="430" y2="400" stroke="#DCEEF7" stroke-width="1" opacity="0.4"/>
+    <line x1="550" y1="388" x2="680" y2="388" stroke="#DCEEF7" stroke-width="1.2" opacity="0.5"/>
+    <line x1="820" y1="398" x2="920" y2="398" stroke="#DCEEF7" stroke-width="1" opacity="0.4"/>
+    <line x1="1050" y1="392" x2="1180" y2="392" stroke="#DCEEF7" stroke-width="1.2" opacity="0.5"/>
 
-    <!-- striscia di spiaggia chiara sotto il mare -->
-    <path d="M 0 400 Q 400 395 800 400 Q 1200 405 1600 400 L 1600 420 L 0 420 Z"
-          fill="#E8DCC0" opacity="0.7"/>
-
-    <!-- COLLINA VILLAGGIO (sinistra, si alza dalla spiaggia) -->
-    <path d="M 0 420
-             Q 80 380 180 390
-             Q 280 400 380 420
-             Q 460 435 540 460
-             L 540 540
-             L 0 540 Z"
+    <!-- VILLAGGIO: collina grande a sinistra, occupa fino a ~650 (40%) -->
+    <!-- collina retro -->
+    <path d="M 0 435
+             Q 120 370 280 360
+             Q 440 355 560 380
+             Q 620 400 680 435
+             L 680 640
+             L 0 640 Z"
           fill="url(#hillGrad)"/>
 
-    <!-- seconda collinetta davanti per dare profondità -->
-    <path d="M 0 490
-             Q 100 470 200 480
-             Q 300 490 400 510
-             Q 460 525 520 540
-             L 520 560
-             L 0 560 Z"
-          fill="#839F6A" opacity="0.9"/>
+    <!-- collina davanti -->
+    <path d="M 0 530
+             Q 130 490 280 495
+             Q 430 502 540 520
+             Q 610 535 660 560
+             L 660 700
+             L 0 700 Z"
+          fill="url(#hillFront)"/>
 
-    <!-- CASE DEL VILLAGGIO (sulla collina media) -->
+    <!-- CASE — più grandi e meglio distribuite -->
     <g>
-      <!-- casa 1 (grande centrale) -->
-      <g transform="translate(140 400)">
-        <rect x="0" y="25" width="55" height="45" fill="#D8B594"/>
-        <polygon points="-4,28 28,0 60,28" fill="#8B3A2E"/>
-        <rect class="window" x="18" y="42" width="8" height="12" fill="#FFD88A" style="animation-duration: 5s; animation-delay: 0s;"/>
-        <rect class="window" x="32" y="42" width="8" height="12" fill="#FFD88A" style="animation-duration: 4.2s; animation-delay: 1s;"/>
-        <rect x="23" y="58" width="10" height="12" fill="#6A4530"/>
+      <!-- casa grande (centrale alta) -->
+      <g transform="translate(180 370)">
+        <rect x="0" y="40" width="85" height="70" fill="#E0BC95"/>
+        <polygon points="-6,44 42,0 90,44" fill="#8B3A2E"/>
+        <rect class="window" x="22" y="62" width="14" height="20" fill="#FFD88A" style="animation-duration: 5s;"/>
+        <rect class="window" x="48" y="62" width="14" height="20" fill="#FFD88A" style="animation-duration: 4.2s; animation-delay: 1s;"/>
+        <rect x="35" y="88" width="16" height="22" fill="#6A4530"/>
       </g>
 
-      <!-- casa 2 (più piccola, a sinistra) -->
-      <g transform="translate(70 430)">
-        <rect x="0" y="18" width="38" height="32" fill="#E5C7A0"/>
-        <polygon points="-3,20 19,0 41,20" fill="#9B4A3A"/>
-        <rect class="window" x="13" y="28" width="6" height="9" fill="#FFD88A" style="animation-duration: 6s; animation-delay: 2s;"/>
-        <rect x="22" y="38" width="8" height="12" fill="#5C3A25"/>
+      <!-- casa piccola a sinistra -->
+      <g transform="translate(60 410)">
+        <rect x="0" y="30" width="60" height="52" fill="#EACBA0"/>
+        <polygon points="-5,33 30,0 65,33" fill="#9B4A3A"/>
+        <rect class="window" x="20" y="46" width="10" height="14" fill="#FFD88A" style="animation-duration: 6s; animation-delay: 2s;"/>
+        <rect class="window" x="36" y="46" width="10" height="14" fill="#FFD88A" style="animation-duration: 5.2s; animation-delay: 0.5s;"/>
+        <rect x="35" y="64" width="12" height="18" fill="#5C3A25"/>
       </g>
 
-      <!-- campanile a destra -->
-      <g transform="translate(240 370)">
-        <rect x="0" y="35" width="32" height="80" fill="#EADCC8"/>
-        <polygon points="-2,38 16,0 34,38" fill="#7D3428"/>
-        <rect class="window" x="11" y="58" width="10" height="14" fill="#FFD88A" style="animation-duration: 7s; animation-delay: 0.5s;"/>
-        <circle cx="16" cy="90" r="3" fill="#6A4530"/>
+      <!-- campanile (dominante) -->
+      <g transform="translate(330 310)">
+        <rect x="0" y="60" width="48" height="140" fill="#EEDCC8"/>
+        <polygon points="-4,64 24,0 52,64" fill="#7D3428"/>
+        <rect class="window" x="16" y="95" width="16" height="22" fill="#FFD88A" style="animation-duration: 7s; animation-delay: 0.5s;"/>
+        <rect class="window" x="16" y="135" width="16" height="22" fill="#FFD88A" style="animation-duration: 4.5s; animation-delay: 1.5s;"/>
+        <circle cx="24" cy="180" r="4" fill="#6A4530"/>
       </g>
 
       <!-- casa 4 -->
-      <g transform="translate(310 420)">
-        <rect x="0" y="22" width="44" height="38" fill="#D6B28D"/>
-        <polygon points="-3,25 22,0 47,25" fill="#8A3F30"/>
-        <rect class="window" x="15" y="32" width="7" height="10" fill="#FFD88A" style="animation-duration: 5.5s; animation-delay: 1.5s;"/>
-        <rect class="window" x="26" y="32" width="7" height="10" fill="#FFD88A" style="animation-duration: 4.8s; animation-delay: 2.5s;"/>
+      <g transform="translate(440 385)">
+        <rect x="0" y="35" width="70" height="60" fill="#D8B28A"/>
+        <polygon points="-5,38 35,0 75,38" fill="#8A3F30"/>
+        <rect class="window" x="20" y="52" width="12" height="17" fill="#FFD88A" style="animation-duration: 5.5s;"/>
+        <rect class="window" x="40" y="52" width="12" height="17" fill="#FFD88A" style="animation-duration: 4.8s; animation-delay: 2.5s;"/>
+        <rect x="30" y="75" width="14" height="20" fill="#6A4530"/>
       </g>
 
       <!-- casa 5 -->
-      <g transform="translate(395 445)">
-        <rect x="0" y="18" width="36" height="30" fill="#E0C099"/>
-        <polygon points="-3,20 18,0 39,20" fill="#933E30"/>
-        <rect class="window" x="13" y="26" width="6" height="9" fill="#FFD88A" style="animation-duration: 6.5s; animation-delay: 0s;"/>
+      <g transform="translate(540 430)">
+        <rect x="0" y="28" width="55" height="46" fill="#E2C399"/>
+        <polygon points="-4,30 27,0 58,30" fill="#933E30"/>
+        <rect class="window" x="20" y="40" width="10" height="14" fill="#FFD88A" style="animation-duration: 6.5s;"/>
       </g>
 
-      <!-- casetta 6, più avanti -->
-      <g transform="translate(460 485)">
-        <rect x="0" y="14" width="32" height="26" fill="#D4B28A"/>
-        <polygon points="-2,16 16,0 34,16" fill="#8A3F30"/>
-        <rect class="window" x="11" y="22" width="5" height="7" fill="#FFD88A" style="animation-duration: 5s; animation-delay: 2s;"/>
-      </g>
-
-      <!-- alberelli sparsi nel villaggio -->
+      <!-- alberelli nel villaggio -->
       <g>
-        <ellipse cx="110" cy="465" rx="12" ry="15" fill="#5A7845"/>
-        <rect x="108" y="475" width="4" height="8" fill="#3E2818"/>
+        <ellipse cx="135" cy="500" rx="18" ry="22" fill="#5A7845"/>
+        <rect x="132" y="515" width="6" height="14" fill="#3E2818"/>
       </g>
       <g>
-        <ellipse cx="285" cy="480" rx="10" ry="13" fill="#5A7845"/>
-        <rect x="283" y="488" width="3" height="7" fill="#3E2818"/>
+        <ellipse cx="405" cy="515" rx="16" ry="20" fill="#5A7845"/>
+        <rect x="403" y="528" width="5" height="12" fill="#3E2818"/>
+      </g>
+      <g>
+        <ellipse cx="615" cy="545" rx="14" ry="18" fill="#5A7845"/>
+        <rect x="613" y="557" width="5" height="11" fill="#3E2818"/>
       </g>
     </g>
 
-    <!-- RUSCELLO — parte dal bosco, va verso il mare, largo e sinuoso a destra -->
+    <!-- RUSCELLO: dall'alto destra, scende diagonalmente verso il centro, poi sfocia a destra nel mare -->
     <g class="stream-shine">
-      <!-- letto del ruscello -->
-      <path d="M 1600 420
-               Q 1500 450 1440 490
-               Q 1380 540 1340 600
-               Q 1310 660 1290 730
-               Q 1275 800 1280 900
-               L 1380 900
-               Q 1370 810 1385 740
-               Q 1400 670 1430 610
-               Q 1465 550 1530 500
-               Q 1580 460 1600 440 Z"
+      <!-- tratto alto, parte dalle colline a destra e scende verso il centro-basso -->
+      <path d="M 1560 430
+               Q 1480 470 1400 520
+               Q 1320 580 1240 640
+               Q 1180 690 1150 760
+               Q 1130 820 1140 900
+               L 1230 900
+               Q 1225 830 1250 770
+               Q 1280 700 1340 640
+               Q 1400 580 1480 530
+               Q 1540 490 1600 460 Z"
             fill="url(#streamGrad)"/>
 
-      <!-- ansa che si allarga verso il mare -->
+      <!-- onde bianche -->
+      <path d="M 1430 500 Q 1455 495 1480 500" stroke="#FFFFFF" stroke-width="1.3" fill="none" opacity="0.75"/>
+      <path d="M 1350 580 Q 1375 575 1400 580" stroke="#FFFFFF" stroke-width="1.3" fill="none" opacity="0.75"/>
+      <path d="M 1270 670 Q 1295 665 1320 670" stroke="#FFFFFF" stroke-width="1.3" fill="none" opacity="0.7"/>
+      <path d="M 1200 770 Q 1225 765 1250 770" stroke="#FFFFFF" stroke-width="1.2" fill="none" opacity="0.65"/>
+      <path d="M 1165 850 Q 1190 845 1215 850" stroke="#FFFFFF" stroke-width="1.2" fill="none" opacity="0.6"/>
+
+      <!-- sassolini -->
+      <circle cx="1160" cy="880" r="3" fill="#9A9180" opacity="0.7"/>
+      <circle cx="1250" cy="820" r="2.5" fill="#A89E8B" opacity="0.7"/>
+      <circle cx="1380" cy="570" r="2" fill="#9A9180" opacity="0.6"/>
+
+      <!-- foce: piccola insenatura dove il ruscello entra nel mare (angolo alto destra) -->
       <path d="M 1600 400
-               Q 1520 410 1440 430
-               Q 1380 445 1340 460
-               L 1340 490
-               Q 1400 470 1470 455
-               Q 1540 440 1600 430 Z"
-            fill="url(#streamGrad)" opacity="0.85"/>
-
-      <!-- onde/riflessi bianchi -->
-      <path d="M 1380 520 Q 1400 515 1420 520" stroke="#FFFFFF" stroke-width="1.3" fill="none" opacity="0.7"/>
-      <path d="M 1340 620 Q 1360 615 1380 620" stroke="#FFFFFF" stroke-width="1.3" fill="none" opacity="0.7"/>
-      <path d="M 1315 700 Q 1335 695 1355 700" stroke="#FFFFFF" stroke-width="1.3" fill="none" opacity="0.7"/>
-      <path d="M 1300 780 Q 1320 775 1340 780" stroke="#FFFFFF" stroke-width="1.3" fill="none" opacity="0.7"/>
-      <path d="M 1460 490 Q 1490 485 1520 490" stroke="#FFFFFF" stroke-width="1.1" fill="none" opacity="0.6"/>
-
-      <!-- sassolini sulla riva -->
-      <circle cx="1280" cy="720" r="3" fill="#9A9180" opacity="0.7"/>
-      <circle cx="1275" cy="820" r="2.5" fill="#A89E8B" opacity="0.7"/>
-      <circle cx="1400" cy="490" r="2" fill="#9A9180" opacity="0.6"/>
+               Q 1570 410 1540 420
+               Q 1510 430 1490 440
+               L 1490 460
+               Q 1530 450 1570 440
+               Q 1590 430 1600 425 Z"
+            fill="url(#streamGrad)" opacity="0.95"/>
     </g>
 
-    <!-- FORESTA — in basso-sinistra e centro, ALBERI ALTI -->
-    <!-- strato di sottobosco (dietro, più scuro) -->
-    <path d="M 0 560
-             Q 200 545 400 555
-             Q 600 565 800 555
-             Q 1000 545 1200 560
-             L 1200 900 L 0 900 Z"
-          fill="url(#forestGrad)"/>
+    <!-- BOSCO: al centro, ridotto, da 550 a 1150 circa (~35% centrale) -->
+    <!-- tappeto boschivo -->
+    <path d="M 540 640
+             Q 700 625 860 635
+             Q 1000 640 1140 645
+             L 1140 900
+             L 540 900 Z"
+          fill="url(#forestGrad)" opacity="0.9"/>
 
-    <!-- Alberi alti individuali — serie davanti -->
+    <!-- alberi alti individuali — solo nella fascia centrale -->
     <g>
-      <!-- albero 1 (molto alto, sinistra) -->
-      <g transform="translate(50 560)">
-        <rect x="8" y="180" width="10" height="60" fill="#3E2818"/>
-        <polygon points="-22,180 13,50 48,180" fill="url(#treeGrad)"/>
-        <polygon points="-18,130 13,30 44,130" fill="url(#treeGrad)"/>
-        <polygon points="-14,85 13,10 40,85" fill="url(#treeGrad)"/>
+      <g transform="translate(590 620)">
+        <rect x="8" y="180" width="10" height="90" fill="#3E2818"/>
+        <polygon points="-24,180 13,40 50,180" fill="url(#treeGrad)"/>
+        <polygon points="-19,130 13,20 45,130" fill="url(#treeGrad)"/>
+        <polygon points="-14,80 13,0 40,80" fill="url(#treeGrad)"/>
       </g>
 
-      <!-- albero 2 -->
-      <g transform="translate(180 580)">
-        <rect x="7" y="160" width="8" height="50" fill="#3E2818"/>
-        <polygon points="-18,160 11,50 40,160" fill="url(#treeGrad)"/>
-        <polygon points="-14,110 11,25 36,110" fill="url(#treeGrad)"/>
+      <g transform="translate(700 650)">
+        <rect x="7" y="160" width="9" height="80" fill="#3E2818"/>
+        <polygon points="-20,160 11,40 42,160" fill="url(#treeGrad)"/>
+        <polygon points="-15,110 11,20 37,110" fill="url(#treeGrad)"/>
       </g>
 
-      <!-- albero 3 (tra i più alti, centro) -->
-      <g transform="translate(330 550)">
-        <rect x="9" y="200" width="11" height="70" fill="#3E2818"/>
-        <polygon points="-25,200 14,50 53,200" fill="url(#treeGrad)"/>
-        <polygon points="-20,140 14,25 48,140" fill="url(#treeGrad)"/>
-        <polygon points="-15,90 14,5 43,90" fill="url(#treeGrad)"/>
+      <g transform="translate(820 610)">
+        <rect x="9" y="210" width="11" height="100" fill="#3E2818"/>
+        <polygon points="-26,210 14,40 54,210" fill="url(#treeGrad)"/>
+        <polygon points="-20,150 14,15 48,150" fill="url(#treeGrad)"/>
+        <polygon points="-15,90 14,-5 43,90" fill="url(#treeGrad)"/>
       </g>
 
-      <!-- albero 4 -->
-      <g transform="translate(480 590)">
-        <rect x="8" y="150" width="9" height="50" fill="#3E2818"/>
-        <polygon points="-20,150 12,45 44,150" fill="url(#treeGrad)"/>
-        <polygon points="-15,100 12,25 39,100" fill="url(#treeGrad)"/>
+      <g transform="translate(930 645)">
+        <rect x="8" y="170" width="10" height="85" fill="#3E2818"/>
+        <polygon points="-22,170 13,45 48,170" fill="url(#treeGrad)"/>
+        <polygon points="-17,115 13,20 43,115" fill="url(#treeGrad)"/>
       </g>
 
-      <!-- albero 5 -->
-      <g transform="translate(620 560)">
-        <rect x="9" y="190" width="10" height="65" fill="#3E2818"/>
-        <polygon points="-22,190 14,45 50,190" fill="url(#treeGrad)"/>
-        <polygon points="-17,135 14,25 45,135" fill="url(#treeGrad)"/>
-        <polygon points="-13,85 14,5 41,85" fill="url(#treeGrad)"/>
+      <g transform="translate(1040 625)">
+        <rect x="9" y="195" width="10" height="90" fill="#3E2818"/>
+        <polygon points="-24,195 14,40 52,195" fill="url(#treeGrad)"/>
+        <polygon points="-19,140 14,20 47,140" fill="url(#treeGrad)"/>
+        <polygon points="-14,85 14,-5 42,85" fill="url(#treeGrad)"/>
       </g>
 
-      <!-- albero 6 -->
-      <g transform="translate(770 575)">
-        <rect x="8" y="170" width="9" height="55" fill="#3E2818"/>
-        <polygon points="-20,170 12,40 44,170" fill="url(#treeGrad)"/>
-        <polygon points="-15,115 12,20 39,115" fill="url(#treeGrad)"/>
+      <!-- albero piccolo dietro per riempire -->
+      <g transform="translate(770 670)">
+        <rect x="6" y="130" width="7" height="60" fill="#3E2818" opacity="0.85"/>
+        <polygon points="-15,130 10,40 35,130" fill="url(#treeGrad)" opacity="0.85"/>
+        <polygon points="-11,90 10,20 31,90" fill="url(#treeGrad)" opacity="0.85"/>
       </g>
 
-      <!-- albero 7 (alto, verso il ruscello) -->
-      <g transform="translate(920 555)">
-        <rect x="9" y="195" width="10" height="65" fill="#3E2818"/>
-        <polygon points="-22,195 14,45 50,195" fill="url(#treeGrad)"/>
-        <polygon points="-17,140 14,25 45,140" fill="url(#treeGrad)"/>
-        <polygon points="-13,90 14,5 41,90" fill="url(#treeGrad)"/>
-      </g>
-
-      <!-- albero 8 -->
-      <g transform="translate(1080 580)">
-        <rect x="8" y="155" width="9" height="50" fill="#3E2818"/>
-        <polygon points="-18,155 12,45 42,155" fill="url(#treeGrad)"/>
-        <polygon points="-14,105 12,25 38,105" fill="url(#treeGrad)"/>
-      </g>
-
-      <!-- albero 9 (tra bosco e ruscello) -->
-      <g transform="translate(1200 560)">
-        <rect x="9" y="180" width="10" height="60" fill="#3E2818"/>
-        <polygon points="-20,180 14,40 48,180" fill="url(#treeGrad)"/>
-        <polygon points="-16,125 14,20 44,125" fill="url(#treeGrad)"/>
-        <polygon points="-12,80 14,5 40,80" fill="url(#treeGrad)"/>
+      <g transform="translate(880 695)">
+        <rect x="6" y="110" width="7" height="55" fill="#3E2818" opacity="0.85"/>
+        <polygon points="-14,110 9,30 32,110" fill="url(#treeGrad)" opacity="0.85"/>
       </g>
     </g>
 
-    <!-- terreno del bosco in primo piano (base scura) -->
-    <path d="M 0 820
-             Q 400 815 800 820
-             Q 1000 822 1280 820
-             L 1280 900 L 0 900 Z"
+    <!-- terreno davanti bosco -->
+    <path d="M 540 870
+             Q 700 865 860 870
+             Q 1000 872 1140 870
+             L 1140 900 L 540 900 Z"
           fill="#1A2A1E" opacity="0.95"/>
+
+    <!-- striscia piccola di spiaggia alla base delle colline del villaggio -->
+    <path d="M 0 700 Q 200 695 400 700 Q 530 703 660 700 L 660 720 L 0 720 Z"
+          fill="#E8DCC0" opacity="0.55"/>
   </svg>
 
-  <!-- NUVOLE animate che passano -->
+  <!-- NUVOLE -->
   <svg class="cloud cloud-move" style="width:200px; top:8%; --from: 100vw; --to: -220px; animation-duration: 120s;" viewBox="0 0 200 80">
     <ellipse cx="50" cy="45" rx="40" ry="22" fill="#FFFFFF" opacity="0.85"/>
     <ellipse cx="90" cy="35" rx="45" ry="28" fill="#FFFFFF" opacity="0.9"/>
@@ -371,6 +323,6 @@
   </svg>
 
   <div class="grain"></div>
-  <div class="label">step 1.2 v2 · villaggio di giorno</div>
+  <div class="label">v3</div>
 </body>
 </html>
