@@ -2,18 +2,197 @@
 <html lang="it">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#050914">
 <title>Risonanza</title>
 <style>
-  html,body{margin:0;height:100%;background:#050914;color:#F4E9D8;font-family:Georgia,serif;display:flex;align-items:center;justify-content:center;text-align:center}
-  h1{font-weight:300;letter-spacing:.3em;font-size:14px;opacity:.6;text-transform:uppercase}
-  p{font-style:italic;opacity:.8;margin-top:1rem}
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    background: #0A1628;
+    overscroll-behavior: none;
+  }
+  body { position: relative; }
+
+  /* Il cielo — ora più luminoso, con l'orizzonte più chiaro */
+  .sky {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 50% 110%, #2A3A5C 0%, #152340 30%, #0A1628 60%, #070F20 100%);
+  }
+
+  /* Alone di luna in alto — non una luna, solo un riverbero */
+  .moon-glow {
+    position: absolute;
+    top: -30vh;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 120vmax;
+    height: 80vh;
+    background: radial-gradient(ellipse at 50% 100%, rgba(244,233,216,0.12), rgba(244,233,216,0.04) 40%, transparent 70%);
+    pointer-events: none;
+  }
+
+  /* Nebulose colorate */
+  .nebula {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    pointer-events: none;
+  }
+  .nebula-cold {
+    width: 70vmax; height: 70vmax;
+    left: -25vmax; top: 10vh;
+    background: radial-gradient(circle, rgba(100,140,190,0.18), transparent 60%);
+  }
+  .nebula-warm {
+    width: 55vmax; height: 55vmax;
+    right: -20vmax; bottom: -15vh;
+    background: radial-gradient(circle, rgba(220,175,95,0.13), transparent 60%);
+  }
+
+  /* Stelle piccole */
+  .stars, .stars-big, .meteors {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+  .star {
+    position: absolute;
+    background: #F4E9D8;
+    border-radius: 50%;
+    animation: twinkle ease-in-out infinite;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: var(--min); }
+    50% { opacity: var(--max); }
+  }
+
+  /* Stelle grandi — le protagoniste, con un alone */
+  .star-big {
+    position: absolute;
+    width: 3px; height: 3px;
+    background: #FFF5E0;
+    border-radius: 50%;
+    box-shadow: 0 0 8px rgba(255,245,224,0.8), 0 0 16px rgba(255,245,224,0.4);
+    animation: twinkle-big ease-in-out infinite;
+  }
+  @keyframes twinkle-big {
+    0%, 100% { opacity: 0.5; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.25); }
+  }
+
+  /* Meteore — linee sottili che attraversano */
+  .meteor {
+    position: absolute;
+    width: 80px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(244,233,216,0.8), transparent);
+    border-radius: 50%;
+    opacity: 0;
+    transform: rotate(-20deg);
+    animation: shoot ease-out infinite;
+  }
+  @keyframes shoot {
+    0% { opacity: 0; transform: translate(0, 0) rotate(-20deg); }
+    8% { opacity: 1; }
+    20% { opacity: 0; transform: translate(-300px, 100px) rotate(-20deg); }
+    100% { opacity: 0; transform: translate(-300px, 100px) rotate(-20deg); }
+  }
+
+  /* Grana */
+  .grain {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.05;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+  }
+
+  .label {
+    position: absolute;
+    bottom: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(244,233,216,0.25);
+    font-family: Georgia, serif;
+    font-style: italic;
+    font-size: 11px;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
+    z-index: 10;
+  }
 </style>
 </head>
 <body>
-<div>
-  <h1>Risonanza</h1>
-  <p>il villaggio sta arrivando</p>
-</div>
+  <div class="sky"></div>
+  <div class="moon-glow"></div>
+  <div class="nebula nebula-cold"></div>
+  <div class="nebula nebula-warm"></div>
+  <div class="stars" id="stars"></div>
+  <div class="stars-big" id="stars-big"></div>
+  <div class="meteors" id="meteors"></div>
+  <div class="grain"></div>
+  <div class="label">step 1.1 · atmosfera v2</div>
+
+<script>
+  // 180 stelle piccole
+  const stars = document.getElementById('stars');
+  for (let i = 0; i < 180; i++) {
+    const s = document.createElement('div');
+    s.className = 'star';
+    const size = Math.random() * 1.8 + 0.3;
+    s.style.left = Math.random() * 100 + '%';
+    s.style.top = Math.random() * 100 + '%';
+    s.style.width = size + 'px';
+    s.style.height = size + 'px';
+    const minOp = 0.15 + Math.random() * 0.25;
+    const maxOp = 0.55 + Math.random() * 0.45;
+    s.style.setProperty('--min', minOp);
+    s.style.setProperty('--max', maxOp);
+    s.style.animationDuration = (4 + Math.random() * 7) + 's';
+    s.style.animationDelay = (Math.random() * 8) + 's';
+    stars.appendChild(s);
+  }
+
+  // 3 stelle grandi protagoniste
+  const bigStars = document.getElementById('stars-big');
+  const bigPositions = [
+    { x: 18, y: 25 },
+    { x: 72, y: 35 },
+    { x: 48, y: 62 },
+  ];
+  bigPositions.forEach((pos, i) => {
+    const s = document.createElement('div');
+    s.className = 'star-big';
+    s.style.left = pos.x + '%';
+    s.style.top = pos.y + '%';
+    s.style.animationDuration = (5 + i * 1.5) + 's';
+    s.style.animationDelay = (i * 0.8) + 's';
+    bigStars.appendChild(s);
+  });
+
+  // 3 meteore con cicli diversi e lenti
+  const meteors = document.getElementById('meteors');
+  const meteorConfigs = [
+    { x: 85, y: 15, duration: 24, delay: 2 },
+    { x: 70, y: 30, duration: 32, delay: 14 },
+    { x: 90, y: 8, duration: 28, delay: 22 },
+  ];
+  meteorConfigs.forEach(cfg => {
+    const m = document.createElement('div');
+    m.className = 'meteor';
+    m.style.left = cfg.x + '%';
+    m.style.top = cfg.y + '%';
+    m.style.animationDuration = cfg.duration + 's';
+    m.style.animationDelay = cfg.delay + 's';
+    meteors.appendChild(m);
+  });
+</script>
 </body>
 </html>
