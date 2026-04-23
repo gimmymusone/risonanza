@@ -1,328 +1,148 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#B8D4E8">
-<title>Risonanza</title>
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  html, body {
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
-    background: #B8D4E8;
-    overscroll-behavior: none;
-  }
-  body { position: relative; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sfondo Flat Landscape</title>
+    <style>
+        :root {
+            --sky-blue: #b3d9ff;
+            --hill-green: #8eb36a;
+            --sea-blue: #4a90e2;
+            --sand: #f2e3c9;
+            --house-body: #d9c5a0;
+            --roof-red: #a6443a;
+        }
 
-  .sky {
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(to bottom,
-      #A8C9E6 0%, #C5DCEC 20%, #DEE8EC 35%, #F0E4D0 42%);
-  }
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-  .sun-glow {
-    position: absolute;
-    top: -20vh;
-    right: -10vw;
-    width: 70vmax;
-    height: 70vh;
-    background: radial-gradient(circle at 70% 90%,
-      rgba(255,230,180,0.55) 0%,
-      rgba(255,230,180,0.25) 20%,
-      rgba(255,230,180,0.08) 45%,
-      transparent 70%);
-    pointer-events: none;
-  }
+        /* Contenitore principale */
+        .hero-background {
+            position: relative;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(to bottom, var(--sky-blue) 0%, #ffffff 100%);
+            display: flex;
+            align-items: flex-end;
+        }
 
-  .cloud { position: absolute; pointer-events: none; opacity: 0.85; }
-  @keyframes drift {
-    from { transform: translateX(var(--from)); }
-    to { transform: translateX(var(--to)); }
-  }
-  .cloud-move { animation: drift linear infinite; }
+        /* Mare e Spiaggia */
+        .sea {
+            position: absolute;
+            bottom: 20%;
+            width: 100%;
+            height: 15%;
+            background-color: var(--sea-blue);
+            z-index: 1;
+        }
 
-  .landscape {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
-    pointer-events: none;
-  }
+        .beach {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 60%;
+            height: 25%;
+            background-color: var(--sand);
+            z-index: 2;
+            clip-path: polygon(20% 0%, 100% 0%, 100% 100%, 0% 100%);
+        }
 
-  @keyframes streamFlow {
-    0%, 100% { opacity: 0.88; }
-    50% { opacity: 1; }
-  }
-  .stream-shine { animation: streamFlow 5s ease-in-out infinite; }
+        /* Collina con Case */
+        .hill {
+            position: absolute;
+            bottom: 0;
+            left: -5%;
+            width: 50%;
+            height: 60%;
+            background: linear-gradient(135deg, #a4c683 0%, var(--hill-green) 100%);
+            border-radius: 0 100% 0 0;
+            z-index: 3;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
-  @keyframes windowFlicker {
-    0%, 100% { opacity: 0.55; }
-    50% { opacity: 0.95; }
-  }
-  .window { animation: windowFlicker ease-in-out infinite; }
+        /* Gruppo di Case (Esempio semplificato) */
+        .village {
+            position: relative;
+            bottom: 10%;
+            display: flex;
+            gap: 20px;
+            align-items: flex-end;
+        }
 
-  .grain {
-    position: absolute; inset: 0; pointer-events: none; opacity: 0.04;
-    mix-blend-mode: multiply;
-    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
-  }
+        .house {
+            width: 40px;
+            height: 40px;
+            background-color: var(--house-body);
+            position: relative;
+        }
 
-  .label {
-    position: absolute; bottom: 10px; right: 14px;
-    color: rgba(30,50,70,0.3); font-family: Georgia, serif; font-style: italic;
-    font-size: 10px; letter-spacing: 0.25em; text-transform: uppercase; z-index: 10;
-  }
-</style>
+        .house::before {
+            content: '';
+            position: absolute;
+            top: -20px;
+            left: 0;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-bottom: 20px solid var(--roof-red);
+        }
+
+        .tower {
+            width: 30px;
+            height: 80px;
+            background-color: #f0f0f0;
+            position: relative;
+        }
+
+        .tower::before {
+            content: '';
+            position: absolute;
+            top: -25px;
+            left: -5px;
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            border-bottom: 25px solid var(--roof-red);
+        }
+
+        /* Contenuto del sito */
+        .content {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            text-align: center;
+            padding-bottom: 20vh;
+            color: #333;
+        }
+
+        h1 { font-size: 3rem; margin-bottom: 10px; }
+    </style>
 </head>
 <body>
-  <div class="sky"></div>
-  <div class="sun-glow"></div>
 
-  <svg class="landscape" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
-    <defs>
-      <linearGradient id="seaGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#8FB8D4"/>
-        <stop offset="100%" stop-color="#5A8FB0"/>
-      </linearGradient>
-      <linearGradient id="streamGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#BEDEEF"/>
-        <stop offset="50%" stop-color="#7AAFCF"/>
-        <stop offset="100%" stop-color="#5089AE"/>
-      </linearGradient>
-      <linearGradient id="hillGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#B2CA8E"/>
-        <stop offset="100%" stop-color="#6F8B52"/>
-      </linearGradient>
-      <linearGradient id="hillFront" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#92AE72"/>
-        <stop offset="100%" stop-color="#556F40"/>
-      </linearGradient>
-      <linearGradient id="forestGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#3E5E45"/>
-        <stop offset="100%" stop-color="#1F3428"/>
-      </linearGradient>
-      <linearGradient id="treeGrad" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0%" stop-color="#52794E"/>
-        <stop offset="100%" stop-color="#2B4530"/>
-      </linearGradient>
-    </defs>
+    <section class="hero-background">
+        <div class="sea"></div>
+        <div class="beach"></div>
+        
+        <div class="hill">
+            <div class="village">
+                <div class="house"></div>
+                <div class="tower"></div>
+                <div class="house"></div>
+            </div>
+        </div>
 
-    <!-- MARE: fascia tra 360 e 430 -->
-    <rect x="0" y="370" width="1600" height="65" fill="url(#seaGrad)"/>
-    <!-- riflessi mare -->
-    <line x1="120" y1="390" x2="240" y2="390" stroke="#DCEEF7" stroke-width="1.2" opacity="0.5"/>
-    <line x1="340" y1="400" x2="430" y2="400" stroke="#DCEEF7" stroke-width="1" opacity="0.4"/>
-    <line x1="550" y1="388" x2="680" y2="388" stroke="#DCEEF7" stroke-width="1.2" opacity="0.5"/>
-    <line x1="820" y1="398" x2="920" y2="398" stroke="#DCEEF7" stroke-width="1" opacity="0.4"/>
-    <line x1="1050" y1="392" x2="1180" y2="392" stroke="#DCEEF7" stroke-width="1.2" opacity="0.5"/>
+        <div class="content">
+            <h1>Benvenuti nel Sito</h1>
+            <p>Un design pulito ispirato al tuo concetto.</p>
+        </div>
+    </section>
 
-    <!-- VILLAGGIO: collina grande a sinistra, occupa fino a ~650 (40%) -->
-    <!-- collina retro -->
-    <path d="M 0 435
-             Q 120 370 280 360
-             Q 440 355 560 380
-             Q 620 400 680 435
-             L 680 640
-             L 0 640 Z"
-          fill="url(#hillGrad)"/>
-
-    <!-- collina davanti -->
-    <path d="M 0 530
-             Q 130 490 280 495
-             Q 430 502 540 520
-             Q 610 535 660 560
-             L 660 700
-             L 0 700 Z"
-          fill="url(#hillFront)"/>
-
-    <!-- CASE — più grandi e meglio distribuite -->
-    <g>
-      <!-- casa grande (centrale alta) -->
-      <g transform="translate(180 370)">
-        <rect x="0" y="40" width="85" height="70" fill="#E0BC95"/>
-        <polygon points="-6,44 42,0 90,44" fill="#8B3A2E"/>
-        <rect class="window" x="22" y="62" width="14" height="20" fill="#FFD88A" style="animation-duration: 5s;"/>
-        <rect class="window" x="48" y="62" width="14" height="20" fill="#FFD88A" style="animation-duration: 4.2s; animation-delay: 1s;"/>
-        <rect x="35" y="88" width="16" height="22" fill="#6A4530"/>
-      </g>
-
-      <!-- casa piccola a sinistra -->
-      <g transform="translate(60 410)">
-        <rect x="0" y="30" width="60" height="52" fill="#EACBA0"/>
-        <polygon points="-5,33 30,0 65,33" fill="#9B4A3A"/>
-        <rect class="window" x="20" y="46" width="10" height="14" fill="#FFD88A" style="animation-duration: 6s; animation-delay: 2s;"/>
-        <rect class="window" x="36" y="46" width="10" height="14" fill="#FFD88A" style="animation-duration: 5.2s; animation-delay: 0.5s;"/>
-        <rect x="35" y="64" width="12" height="18" fill="#5C3A25"/>
-      </g>
-
-      <!-- campanile (dominante) -->
-      <g transform="translate(330 310)">
-        <rect x="0" y="60" width="48" height="140" fill="#EEDCC8"/>
-        <polygon points="-4,64 24,0 52,64" fill="#7D3428"/>
-        <rect class="window" x="16" y="95" width="16" height="22" fill="#FFD88A" style="animation-duration: 7s; animation-delay: 0.5s;"/>
-        <rect class="window" x="16" y="135" width="16" height="22" fill="#FFD88A" style="animation-duration: 4.5s; animation-delay: 1.5s;"/>
-        <circle cx="24" cy="180" r="4" fill="#6A4530"/>
-      </g>
-
-      <!-- casa 4 -->
-      <g transform="translate(440 385)">
-        <rect x="0" y="35" width="70" height="60" fill="#D8B28A"/>
-        <polygon points="-5,38 35,0 75,38" fill="#8A3F30"/>
-        <rect class="window" x="20" y="52" width="12" height="17" fill="#FFD88A" style="animation-duration: 5.5s;"/>
-        <rect class="window" x="40" y="52" width="12" height="17" fill="#FFD88A" style="animation-duration: 4.8s; animation-delay: 2.5s;"/>
-        <rect x="30" y="75" width="14" height="20" fill="#6A4530"/>
-      </g>
-
-      <!-- casa 5 -->
-      <g transform="translate(540 430)">
-        <rect x="0" y="28" width="55" height="46" fill="#E2C399"/>
-        <polygon points="-4,30 27,0 58,30" fill="#933E30"/>
-        <rect class="window" x="20" y="40" width="10" height="14" fill="#FFD88A" style="animation-duration: 6.5s;"/>
-      </g>
-
-      <!-- alberelli nel villaggio -->
-      <g>
-        <ellipse cx="135" cy="500" rx="18" ry="22" fill="#5A7845"/>
-        <rect x="132" y="515" width="6" height="14" fill="#3E2818"/>
-      </g>
-      <g>
-        <ellipse cx="405" cy="515" rx="16" ry="20" fill="#5A7845"/>
-        <rect x="403" y="528" width="5" height="12" fill="#3E2818"/>
-      </g>
-      <g>
-        <ellipse cx="615" cy="545" rx="14" ry="18" fill="#5A7845"/>
-        <rect x="613" y="557" width="5" height="11" fill="#3E2818"/>
-      </g>
-    </g>
-
-    <!-- RUSCELLO: dall'alto destra, scende diagonalmente verso il centro, poi sfocia a destra nel mare -->
-    <g class="stream-shine">
-      <!-- tratto alto, parte dalle colline a destra e scende verso il centro-basso -->
-      <path d="M 1560 430
-               Q 1480 470 1400 520
-               Q 1320 580 1240 640
-               Q 1180 690 1150 760
-               Q 1130 820 1140 900
-               L 1230 900
-               Q 1225 830 1250 770
-               Q 1280 700 1340 640
-               Q 1400 580 1480 530
-               Q 1540 490 1600 460 Z"
-            fill="url(#streamGrad)"/>
-
-      <!-- onde bianche -->
-      <path d="M 1430 500 Q 1455 495 1480 500" stroke="#FFFFFF" stroke-width="1.3" fill="none" opacity="0.75"/>
-      <path d="M 1350 580 Q 1375 575 1400 580" stroke="#FFFFFF" stroke-width="1.3" fill="none" opacity="0.75"/>
-      <path d="M 1270 670 Q 1295 665 1320 670" stroke="#FFFFFF" stroke-width="1.3" fill="none" opacity="0.7"/>
-      <path d="M 1200 770 Q 1225 765 1250 770" stroke="#FFFFFF" stroke-width="1.2" fill="none" opacity="0.65"/>
-      <path d="M 1165 850 Q 1190 845 1215 850" stroke="#FFFFFF" stroke-width="1.2" fill="none" opacity="0.6"/>
-
-      <!-- sassolini -->
-      <circle cx="1160" cy="880" r="3" fill="#9A9180" opacity="0.7"/>
-      <circle cx="1250" cy="820" r="2.5" fill="#A89E8B" opacity="0.7"/>
-      <circle cx="1380" cy="570" r="2" fill="#9A9180" opacity="0.6"/>
-
-      <!-- foce: piccola insenatura dove il ruscello entra nel mare (angolo alto destra) -->
-      <path d="M 1600 400
-               Q 1570 410 1540 420
-               Q 1510 430 1490 440
-               L 1490 460
-               Q 1530 450 1570 440
-               Q 1590 430 1600 425 Z"
-            fill="url(#streamGrad)" opacity="0.95"/>
-    </g>
-
-    <!-- BOSCO: al centro, ridotto, da 550 a 1150 circa (~35% centrale) -->
-    <!-- tappeto boschivo -->
-    <path d="M 540 640
-             Q 700 625 860 635
-             Q 1000 640 1140 645
-             L 1140 900
-             L 540 900 Z"
-          fill="url(#forestGrad)" opacity="0.9"/>
-
-    <!-- alberi alti individuali — solo nella fascia centrale -->
-    <g>
-      <g transform="translate(590 620)">
-        <rect x="8" y="180" width="10" height="90" fill="#3E2818"/>
-        <polygon points="-24,180 13,40 50,180" fill="url(#treeGrad)"/>
-        <polygon points="-19,130 13,20 45,130" fill="url(#treeGrad)"/>
-        <polygon points="-14,80 13,0 40,80" fill="url(#treeGrad)"/>
-      </g>
-
-      <g transform="translate(700 650)">
-        <rect x="7" y="160" width="9" height="80" fill="#3E2818"/>
-        <polygon points="-20,160 11,40 42,160" fill="url(#treeGrad)"/>
-        <polygon points="-15,110 11,20 37,110" fill="url(#treeGrad)"/>
-      </g>
-
-      <g transform="translate(820 610)">
-        <rect x="9" y="210" width="11" height="100" fill="#3E2818"/>
-        <polygon points="-26,210 14,40 54,210" fill="url(#treeGrad)"/>
-        <polygon points="-20,150 14,15 48,150" fill="url(#treeGrad)"/>
-        <polygon points="-15,90 14,-5 43,90" fill="url(#treeGrad)"/>
-      </g>
-
-      <g transform="translate(930 645)">
-        <rect x="8" y="170" width="10" height="85" fill="#3E2818"/>
-        <polygon points="-22,170 13,45 48,170" fill="url(#treeGrad)"/>
-        <polygon points="-17,115 13,20 43,115" fill="url(#treeGrad)"/>
-      </g>
-
-      <g transform="translate(1040 625)">
-        <rect x="9" y="195" width="10" height="90" fill="#3E2818"/>
-        <polygon points="-24,195 14,40 52,195" fill="url(#treeGrad)"/>
-        <polygon points="-19,140 14,20 47,140" fill="url(#treeGrad)"/>
-        <polygon points="-14,85 14,-5 42,85" fill="url(#treeGrad)"/>
-      </g>
-
-      <!-- albero piccolo dietro per riempire -->
-      <g transform="translate(770 670)">
-        <rect x="6" y="130" width="7" height="60" fill="#3E2818" opacity="0.85"/>
-        <polygon points="-15,130 10,40 35,130" fill="url(#treeGrad)" opacity="0.85"/>
-        <polygon points="-11,90 10,20 31,90" fill="url(#treeGrad)" opacity="0.85"/>
-      </g>
-
-      <g transform="translate(880 695)">
-        <rect x="6" y="110" width="7" height="55" fill="#3E2818" opacity="0.85"/>
-        <polygon points="-14,110 9,30 32,110" fill="url(#treeGrad)" opacity="0.85"/>
-      </g>
-    </g>
-
-    <!-- terreno davanti bosco -->
-    <path d="M 540 870
-             Q 700 865 860 870
-             Q 1000 872 1140 870
-             L 1140 900 L 540 900 Z"
-          fill="#1A2A1E" opacity="0.95"/>
-
-    <!-- striscia piccola di spiaggia alla base delle colline del villaggio -->
-    <path d="M 0 700 Q 200 695 400 700 Q 530 703 660 700 L 660 720 L 0 720 Z"
-          fill="#E8DCC0" opacity="0.55"/>
-  </svg>
-
-  <!-- NUVOLE -->
-  <svg class="cloud cloud-move" style="width:200px; top:8%; --from: 100vw; --to: -220px; animation-duration: 120s;" viewBox="0 0 200 80">
-    <ellipse cx="50" cy="45" rx="40" ry="22" fill="#FFFFFF" opacity="0.85"/>
-    <ellipse cx="90" cy="35" rx="45" ry="28" fill="#FFFFFF" opacity="0.9"/>
-    <ellipse cx="130" cy="45" rx="40" ry="22" fill="#FFFFFF" opacity="0.85"/>
-    <ellipse cx="100" cy="50" rx="55" ry="20" fill="#FFFFFF" opacity="0.75"/>
-  </svg>
-
-  <svg class="cloud cloud-move" style="width:140px; top:18%; --from: 100vw; --to: -160px; animation-duration: 180s; animation-delay: -60s;" viewBox="0 0 140 60">
-    <ellipse cx="35" cy="35" rx="28" ry="16" fill="#FFFFFF" opacity="0.75"/>
-    <ellipse cx="70" cy="28" rx="32" ry="20" fill="#FFFFFF" opacity="0.8"/>
-    <ellipse cx="105" cy="35" rx="28" ry="16" fill="#FFFFFF" opacity="0.75"/>
-  </svg>
-
-  <svg class="cloud cloud-move" style="width:170px; top:3%; --from: 100vw; --to: -190px; animation-duration: 150s; animation-delay: -90s;" viewBox="0 0 170 70">
-    <ellipse cx="42" cy="40" rx="35" ry="19" fill="#FFFFFF" opacity="0.7"/>
-    <ellipse cx="82" cy="32" rx="38" ry="24" fill="#FFFFFF" opacity="0.78"/>
-    <ellipse cx="122" cy="40" rx="35" ry="19" fill="#FFFFFF" opacity="0.7"/>
-  </svg>
-
-  <div class="grain"></div>
-  <div class="label">v3</div>
 </body>
 </html>
