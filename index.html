@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
-<meta name="theme-color" content="#050914">
+<meta name="theme-color" content="#0A1628">
 <title>Risonanza</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -16,68 +16,48 @@
   }
   body { position: relative; }
 
-  /* Il cielo — ora più luminoso, con l'orizzonte più chiaro */
+  /* CIELO */
   .sky {
     position: absolute;
     inset: 0;
     background:
-      radial-gradient(ellipse at 50% 110%, #2A3A5C 0%, #152340 30%, #0A1628 60%, #070F20 100%);
+      radial-gradient(ellipse 140% 100% at 50% 100%, #3A4A6C 0%, #1F3055 25%, #0F1E3D 55%, #070F20 100%);
   }
 
-  /* Alone di luna in alto — non una luna, solo un riverbero */
   .moon-glow {
     position: absolute;
     top: -30vh;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 120vmax;
+    left: 30%;
+    width: 80vmax;
     height: 80vh;
-    background: radial-gradient(ellipse at 50% 100%, rgba(244,233,216,0.12), rgba(244,233,216,0.04) 40%, transparent 70%);
+    background: radial-gradient(ellipse at 50% 100%, rgba(244,233,216,0.15), rgba(244,233,216,0.04) 40%, transparent 70%);
     pointer-events: none;
   }
 
-  /* Nebulose colorate */
+  /* NEBULOSE */
   .nebula {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    pointer-events: none;
+    position: absolute; border-radius: 50%; filter: blur(80px); pointer-events: none;
   }
   .nebula-cold {
-    width: 70vmax; height: 70vmax;
-    left: -25vmax; top: 10vh;
+    width: 70vmax; height: 70vmax; left: -25vmax; top: 10vh;
     background: radial-gradient(circle, rgba(100,140,190,0.18), transparent 60%);
   }
   .nebula-warm {
-    width: 55vmax; height: 55vmax;
-    right: -20vmax; bottom: -15vh;
+    width: 55vmax; height: 55vmax; right: -20vmax; bottom: -15vh;
     background: radial-gradient(circle, rgba(220,175,95,0.13), transparent 60%);
   }
 
-  /* Stelle piccole */
+  /* STELLE */
   .stars, .stars-big, .meteors {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-    pointer-events: none;
+    position: absolute; inset: 0; overflow: hidden; pointer-events: none;
   }
-  .star {
-    position: absolute;
-    background: #F4E9D8;
-    border-radius: 50%;
-    animation: twinkle ease-in-out infinite;
-  }
+  .star { position: absolute; background: #F4E9D8; border-radius: 50%; animation: twinkle ease-in-out infinite; }
   @keyframes twinkle {
     0%, 100% { opacity: var(--min); }
     50% { opacity: var(--max); }
   }
-
-  /* Stelle grandi — le protagoniste, con un alone */
   .star-big {
-    position: absolute;
-    width: 3px; height: 3px;
-    background: #FFF5E0;
-    border-radius: 50%;
+    position: absolute; width: 3px; height: 3px; background: #FFF5E0; border-radius: 50%;
     box-shadow: 0 0 8px rgba(255,245,224,0.8), 0 0 16px rgba(255,245,224,0.4);
     animation: twinkle-big ease-in-out infinite;
   }
@@ -85,16 +65,10 @@
     0%, 100% { opacity: 0.5; transform: scale(1); }
     50% { opacity: 1; transform: scale(1.25); }
   }
-
-  /* Meteore — linee sottili che attraversano */
   .meteor {
-    position: absolute;
-    width: 80px;
-    height: 1px;
+    position: absolute; width: 80px; height: 1px;
     background: linear-gradient(90deg, transparent, rgba(244,233,216,0.8), transparent);
-    border-radius: 50%;
-    opacity: 0;
-    transform: rotate(-20deg);
+    border-radius: 50%; opacity: 0; transform: rotate(-20deg);
     animation: shoot ease-out infinite;
   }
   @keyframes shoot {
@@ -104,28 +78,44 @@
     100% { opacity: 0; transform: translate(-300px, 100px) rotate(-20deg); }
   }
 
-  /* Grana */
-  .grain {
+  /* PAESAGGIO — SVG full screen */
+  .landscape {
     position: absolute;
     inset: 0;
+    width: 100%;
+    height: 100%;
     pointer-events: none;
-    opacity: 0.05;
+  }
+
+  /* Finestre del villaggio che pulsano */
+  @keyframes windowFlicker {
+    0%, 100% { opacity: 0.7; }
+    50% { opacity: 1; }
+  }
+  .window {
+    animation: windowFlicker ease-in-out infinite;
+  }
+
+  /* Ruscello — luccichio lento */
+  @keyframes streamShimmer {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 0.85; }
+  }
+  .stream {
+    animation: streamShimmer 6s ease-in-out infinite;
+  }
+
+  /* GRANA */
+  .grain {
+    position: absolute; inset: 0; pointer-events: none; opacity: 0.05;
     mix-blend-mode: overlay;
     background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
   }
 
   .label {
-    position: absolute;
-    bottom: 16px;
-    left: 50%;
-    transform: translateX(-50%);
-    color: rgba(244,233,216,0.25);
-    font-family: Georgia, serif;
-    font-style: italic;
-    font-size: 11px;
-    letter-spacing: 0.3em;
-    text-transform: uppercase;
-    z-index: 10;
+    position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%);
+    color: rgba(244,233,216,0.25); font-family: Georgia, serif; font-style: italic;
+    font-size: 11px; letter-spacing: 0.3em; text-transform: uppercase; z-index: 10;
   }
 </style>
 </head>
@@ -137,18 +127,151 @@
   <div class="stars" id="stars"></div>
   <div class="stars-big" id="stars-big"></div>
   <div class="meteors" id="meteors"></div>
+
+  <!-- IL VILLAGGIO come SVG che riempie tutto -->
+  <svg class="landscape" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice">
+    <defs>
+      <!-- riflesso ruscello -->
+      <linearGradient id="streamGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#B8D4E8" stop-opacity="0.8"/>
+        <stop offset="100%" stop-color="#6B8EAE" stop-opacity="0.3"/>
+      </linearGradient>
+      <!-- alone finestra -->
+      <radialGradient id="windowGlow">
+        <stop offset="0%" stop-color="#FFD88A" stop-opacity="0.8"/>
+        <stop offset="100%" stop-color="#FFD88A" stop-opacity="0"/>
+      </radialGradient>
+      <!-- sfumatura foresta -->
+      <linearGradient id="forestGrad" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#0A1220" stop-opacity="1"/>
+        <stop offset="100%" stop-color="#000000" stop-opacity="1"/>
+      </linearGradient>
+    </defs>
+
+    <!-- MONTAGNE LONTANE -->
+    <path d="M 0 520 L 180 380 L 320 440 L 480 350 L 640 430 L 780 400 L 900 460 L 1050 380 L 1200 440 L 1380 400 L 1600 480 L 1600 540 L 0 540 Z"
+          fill="#15243E" opacity="0.7"/>
+    <path d="M 0 560 L 140 460 L 280 510 L 440 430 L 600 500 L 760 470 L 920 520 L 1080 450 L 1240 510 L 1420 480 L 1600 540 L 1600 580 L 0 580 Z"
+          fill="#0E1B33" opacity="0.85"/>
+
+    <!-- VILLAGGIO a SINISTRA (sulla collina media) -->
+    <g opacity="0.95">
+      <!-- collina che regge il villaggio -->
+      <path d="M 0 620 Q 150 540 320 580 Q 450 610 520 640 L 520 900 L 0 900 Z"
+            fill="#0C1A30"/>
+
+      <!-- case del villaggio -->
+      <!-- casa 1 (grande centrale) -->
+      <g transform="translate(130 540)">
+        <polygon points="0,30 30,0 60,30 60,70 0,70" fill="#06101E"/>
+        <polygon points="0,30 30,0 60,30" fill="#0A1828"/>
+        <rect class="window" x="22" y="40" width="10" height="14" fill="url(#windowGlow)" style="animation-duration: 4.2s; animation-delay: 0s;"/>
+        <rect class="window" x="22" y="40" width="6" height="10" fill="#FFD88A" style="animation-duration: 4.2s; animation-delay: 0s;"/>
+      </g>
+
+      <!-- casa 2 (piccola a sinistra) -->
+      <g transform="translate(70 580)">
+        <polygon points="0,20 20,0 40,20 40,50 0,50" fill="#06101E"/>
+        <polygon points="0,20 20,0 40,20" fill="#0A1828"/>
+        <rect class="window" x="14" y="28" width="5" height="8" fill="#FFD88A" style="animation-duration: 5.8s; animation-delay: 1s;"/>
+      </g>
+
+      <!-- casa 3 (a destra, più alta - campanile) -->
+      <g transform="translate(210 500)">
+        <polygon points="0,40 25,0 50,40 50,110 0,110" fill="#06101E"/>
+        <polygon points="0,40 25,0 50,40" fill="#0A1828"/>
+        <rect class="window" x="18" y="55" width="8" height="12" fill="#FFD88A" style="animation-duration: 6.5s; animation-delay: 2s;"/>
+        <rect class="window" x="18" y="80" width="8" height="12" fill="#FFD88A" style="animation-duration: 3.8s; animation-delay: 0.5s;"/>
+      </g>
+
+      <!-- casa 4 -->
+      <g transform="translate(290 560)">
+        <polygon points="0,25 22,0 44,25 44,65 0,65" fill="#06101E"/>
+        <polygon points="0,25 22,0 44,25" fill="#0A1828"/>
+        <rect class="window" x="16" y="35" width="6" height="9" fill="#FFD88A" style="animation-duration: 4.8s; animation-delay: 1.5s;"/>
+      </g>
+
+      <!-- casa 5 (più a destra) -->
+      <g transform="translate(370 590)">
+        <polygon points="0,20 18,0 36,20 36,55 0,55" fill="#06101E"/>
+        <polygon points="0,20 18,0 36,20" fill="#0A1828"/>
+        <rect class="window" x="12" y="28" width="5" height="8" fill="#FFD88A" style="animation-duration: 5.2s; animation-delay: 2.8s;"/>
+      </g>
+
+      <!-- fumo dai camini — sottile, statico -->
+      <path d="M 170 540 Q 168 520 172 500 Q 175 485 173 475" stroke="#1F2B42" stroke-width="2" fill="none" opacity="0.5" stroke-linecap="round"/>
+    </g>
+
+    <!-- RUSCELLO a DESTRA che scende e attraversa -->
+    <g class="stream">
+      <!-- letto del ruscello -->
+      <path d="M 1600 380
+               Q 1400 420 1300 480
+               Q 1200 540 1050 620
+               Q 900 700 750 740
+               L 750 760
+               Q 900 720 1050 640
+               Q 1200 560 1300 500
+               Q 1400 440 1600 400 Z"
+            fill="url(#streamGrad)"/>
+
+      <!-- riflessi puntuali -->
+      <circle cx="1420" cy="430" r="1.2" fill="#FFFFFF" opacity="0.8"/>
+      <circle cx="1280" cy="500" r="1" fill="#FFFFFF" opacity="0.7"/>
+      <circle cx="1120" cy="590" r="1.3" fill="#FFFFFF" opacity="0.8"/>
+      <circle cx="950" cy="680" r="1" fill="#FFFFFF" opacity="0.6"/>
+      <circle cx="820" cy="730" r="1.2" fill="#FFFFFF" opacity="0.7"/>
+    </g>
+
+    <!-- FORESTA in basso (in primo piano) -->
+    <!-- strato forestale lontano (dietro) -->
+    <path d="M 0 720
+             L 60 680 L 90 700 L 140 660 L 180 690 L 230 665 L 280 695 L 340 670
+             L 400 690 L 460 665 L 520 695 L 580 670 L 650 690 L 720 665 L 800 695
+             L 880 670 L 960 695 L 1040 670 L 1120 695 L 1200 670 L 1280 695
+             L 1360 670 L 1440 695 L 1520 670 L 1600 690 L 1600 900 L 0 900 Z"
+          fill="#091020" opacity="0.95"/>
+
+    <!-- strato forestale davanti (pini più grandi) -->
+    <path d="M 0 820
+             L 50 760 L 75 790 L 120 740 L 160 780 L 210 745 L 265 785 L 320 750
+             L 385 790 L 450 755 L 515 795 L 580 760 L 650 795 L 720 755 L 795 790
+             L 870 760 L 945 795 L 1020 760 L 1100 795 L 1180 760 L 1260 790
+             L 1340 755 L 1420 795 L 1500 760 L 1600 790 L 1600 900 L 0 900 Z"
+          fill="url(#forestGrad)"/>
+
+    <!-- Qualche pino in primo piano, più grandi -->
+    <g opacity="0.98">
+      <!-- pino 1 -->
+      <polygon points="180,810 165,855 195,855" fill="#040810"/>
+      <polygon points="180,780 160,830 200,830" fill="#040810"/>
+      <polygon points="180,760 163,800 197,800" fill="#040810"/>
+      <!-- pino 2 -->
+      <polygon points="480,830 460,880 500,880" fill="#040810"/>
+      <polygon points="480,795 457,850 503,850" fill="#040810"/>
+      <polygon points="480,770 461,820 499,820" fill="#040810"/>
+      <!-- pino 3 -->
+      <polygon points="920,820 902,870 938,870" fill="#040810"/>
+      <polygon points="920,790 900,840 940,840" fill="#040810"/>
+      <!-- pino 4 -->
+      <polygon points="1280,820 1262,875 1298,875" fill="#040810"/>
+      <polygon points="1280,785 1258,840 1302,840" fill="#040810"/>
+      <polygon points="1280,760 1262,810 1298,810" fill="#040810"/>
+    </g>
+  </svg>
+
   <div class="grain"></div>
-  <div class="label">step 1.1 · atmosfera v2</div>
+  <div class="label">step 1.2 · villaggio</div>
 
 <script>
-  // 180 stelle piccole
   const stars = document.getElementById('stars');
   for (let i = 0; i < 180; i++) {
     const s = document.createElement('div');
     s.className = 'star';
     const size = Math.random() * 1.8 + 0.3;
     s.style.left = Math.random() * 100 + '%';
-    s.style.top = Math.random() * 100 + '%';
+    // le stelle solo nella metà superiore (sotto c'è il paesaggio)
+    s.style.top = (Math.random() * 55) + '%';
     s.style.width = size + 'px';
     s.style.height = size + 'px';
     const minOp = 0.15 + Math.random() * 0.25;
@@ -160,13 +283,8 @@
     stars.appendChild(s);
   }
 
-  // 3 stelle grandi protagoniste
   const bigStars = document.getElementById('stars-big');
-  const bigPositions = [
-    { x: 18, y: 25 },
-    { x: 72, y: 35 },
-    { x: 48, y: 62 },
-  ];
+  const bigPositions = [{ x: 18, y: 18 }, { x: 72, y: 25 }, { x: 48, y: 38 }];
   bigPositions.forEach((pos, i) => {
     const s = document.createElement('div');
     s.className = 'star-big';
@@ -177,11 +295,10 @@
     bigStars.appendChild(s);
   });
 
-  // 3 meteore con cicli diversi e lenti
   const meteors = document.getElementById('meteors');
   const meteorConfigs = [
     { x: 85, y: 15, duration: 24, delay: 2 },
-    { x: 70, y: 30, duration: 32, delay: 14 },
+    { x: 70, y: 25, duration: 32, delay: 14 },
     { x: 90, y: 8, duration: 28, delay: 22 },
   ];
   meteorConfigs.forEach(cfg => {
