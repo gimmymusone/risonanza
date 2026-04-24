@@ -1,148 +1,149 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sfondo Flat Landscape</title>
-    <style>
-        :root {
-            --sky-blue: #b3d9ff;
-            --hill-green: #8eb36a;
-            --sea-blue: #4a90e2;
-            --sand: #f2e3c9;
-            --house-body: #d9c5a0;
-            --roof-red: #a6443a;
-        }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#B8D4E8">
+<title>Risonanza</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    height: 100%; width: 100%;
+    overflow: hidden;
+    background: #B8D4E8;
+    overscroll-behavior: none;
+  }
+  body { position: relative; }
 
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            overflow: hidden;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+  /* SFONDO — l'immagine del villaggio a tutto schermo */
+  .background {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('villaggio.jpeg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
 
-        /* Contenitore principale */
-        .hero-background {
-            position: relative;
-            width: 100%;
-            height: 100vh;
-            background: linear-gradient(to bottom, var(--sky-blue) 0%, #ffffff 100%);
-            display: flex;
-            align-items: flex-end;
-        }
+  /* NUVOLE che passano sopra lente */
+  .cloud {
+    position: absolute;
+    pointer-events: none;
+  }
+  @keyframes drift {
+    from { transform: translateX(var(--from)); }
+    to { transform: translateX(var(--to)); }
+  }
+  .cloud-move { animation: drift linear infinite; }
 
-        /* Mare e Spiaggia */
-        .sea {
-            position: absolute;
-            bottom: 20%;
-            width: 100%;
-            height: 15%;
-            background-color: var(--sea-blue);
-            z-index: 1;
-        }
+  /* UCCELLINI che attraversano */
+  .birds {
+    position: absolute;
+    pointer-events: none;
+    animation: fly 45s linear infinite;
+  }
+  @keyframes fly {
+    0% { transform: translate(110vw, 0); }
+    100% { transform: translate(-20vw, -8vh); }
+  }
 
-        .beach {
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: 60%;
-            height: 25%;
-            background-color: var(--sand);
-            z-index: 2;
-            clip-path: polygon(20% 0%, 100% 0%, 100% 100%, 0% 100%);
-        }
+  /* Ogni uccellino fa un piccolo flap */
+  @keyframes flap {
+    0%, 100% { transform: scaleY(1); }
+    50% { transform: scaleY(0.6); }
+  }
+  .bird {
+    animation: flap 0.4s ease-in-out infinite;
+    transform-origin: center;
+  }
+  .bird:nth-child(2) { animation-delay: 0.1s; }
+  .bird:nth-child(3) { animation-delay: 0.2s; }
 
-        /* Collina con Case */
-        .hill {
-            position: absolute;
-            bottom: 0;
-            left: -5%;
-            width: 50%;
-            height: 60%;
-            background: linear-gradient(135deg, #a4c683 0%, var(--hill-green) 100%);
-            border-radius: 0 100% 0 0;
-            z-index: 3;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+  /* Luccichii del fiume */
+  .sparkle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #FFFFFF;
+    border-radius: 50%;
+    box-shadow: 0 0 6px rgba(255,255,255,0.8);
+    animation: twinkle 3s ease-in-out infinite;
+  }
+  @keyframes twinkle {
+    0%, 100% { opacity: 0; transform: scale(0.5); }
+    50% { opacity: 1; transform: scale(1); }
+  }
 
-        /* Gruppo di Case (Esempio semplificato) */
-        .village {
-            position: relative;
-            bottom: 10%;
-            display: flex;
-            gap: 20px;
-            align-items: flex-end;
-        }
+  /* Finestre delle case che pulsano calde */
+  .window-glow {
+    position: absolute;
+    border-radius: 2px;
+    background: radial-gradient(circle, rgba(255,216,138,0.9), rgba(255,216,138,0) 70%);
+    animation: glow 5s ease-in-out infinite;
+    pointer-events: none;
+  }
+  @keyframes glow {
+    0%, 100% { opacity: 0.35; }
+    50% { opacity: 0.85; }
+  }
 
-        .house {
-            width: 40px;
-            height: 40px;
-            background-color: var(--house-body);
-            position: relative;
-        }
-
-        .house::before {
-            content: '';
-            position: absolute;
-            top: -20px;
-            left: 0;
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-bottom: 20px solid var(--roof-red);
-        }
-
-        .tower {
-            width: 30px;
-            height: 80px;
-            background-color: #f0f0f0;
-            position: relative;
-        }
-
-        .tower::before {
-            content: '';
-            position: absolute;
-            top: -25px;
-            left: -5px;
-            border-left: 20px solid transparent;
-            border-right: 20px solid transparent;
-            border-bottom: 25px solid var(--roof-red);
-        }
-
-        /* Contenuto del sito */
-        .content {
-            position: relative;
-            z-index: 10;
-            width: 100%;
-            text-align: center;
-            padding-bottom: 20vh;
-            color: #333;
-        }
-
-        h1 { font-size: 3rem; margin-bottom: 10px; }
-    </style>
+  .label {
+    position: absolute; bottom: 10px; right: 14px;
+    color: rgba(30,50,70,0.35);
+    font-family: Georgia, serif; font-style: italic;
+    font-size: 10px; letter-spacing: 0.25em;
+    text-transform: uppercase; z-index: 10;
+  }
+</style>
 </head>
 <body>
+  <div class="background"></div>
 
-    <section class="hero-background">
-        <div class="sea"></div>
-        <div class="beach"></div>
-        
-        <div class="hill">
-            <div class="village">
-                <div class="house"></div>
-                <div class="tower"></div>
-                <div class="house"></div>
-            </div>
-        </div>
+  <!-- NUVOLE ANIMATE -->
+  <svg class="cloud cloud-move" style="width:180px; top:5%; --from: 110vw; --to: -200px; animation-duration: 140s;" viewBox="0 0 180 70">
+    <ellipse cx="45" cy="40" rx="35" ry="18" fill="#FFFFFF" opacity="0.6"/>
+    <ellipse cx="80" cy="32" rx="38" ry="22" fill="#FFFFFF" opacity="0.7"/>
+    <ellipse cx="120" cy="40" rx="35" ry="18" fill="#FFFFFF" opacity="0.6"/>
+  </svg>
 
-        <div class="content">
-            <h1>Benvenuti nel Sito</h1>
-            <p>Un design pulito ispirato al tuo concetto.</p>
-        </div>
-    </section>
+  <svg class="cloud cloud-move" style="width:130px; top:12%; --from: 110vw; --to: -150px; animation-duration: 200s; animation-delay: -80s;" viewBox="0 0 130 55">
+    <ellipse cx="32" cy="32" rx="25" ry="14" fill="#FFFFFF" opacity="0.55"/>
+    <ellipse cx="65" cy="26" rx="28" ry="17" fill="#FFFFFF" opacity="0.65"/>
+    <ellipse cx="98" cy="32" rx="25" ry="14" fill="#FFFFFF" opacity="0.55"/>
+  </svg>
 
+  <svg class="cloud cloud-move" style="width:160px; top:18%; --from: 110vw; --to: -180px; animation-duration: 170s; animation-delay: -100s;" viewBox="0 0 160 65">
+    <ellipse cx="40" cy="38" rx="32" ry="17" fill="#FFFFFF" opacity="0.5"/>
+    <ellipse cx="78" cy="30" rx="35" ry="21" fill="#FFFFFF" opacity="0.6"/>
+    <ellipse cx="116" cy="38" rx="32" ry="17" fill="#FFFFFF" opacity="0.5"/>
+  </svg>
+
+  <!-- UCCELLINI che attraversano ogni tanto -->
+  <svg class="birds" style="top: 22%;" width="60" height="20" viewBox="0 0 60 20">
+    <path class="bird" d="M 5 10 Q 10 4 15 10 Q 20 4 25 10" stroke="#3A4155" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path class="bird" d="M 22 14 Q 26 10 30 14 Q 34 10 38 14" stroke="#3A4155" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+    <path class="bird" d="M 40 11 Q 44 6 48 11 Q 52 6 56 11" stroke="#3A4155" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+  </svg>
+
+  <!-- LUCCICHII DEL FIUME (la posizione è regolata ad occhio sull'immagine) -->
+  <div class="sparkle" style="left: 72%; top: 40%; animation-delay: 0s;"></div>
+  <div class="sparkle" style="left: 78%; top: 48%; animation-delay: 1s;"></div>
+  <div class="sparkle" style="left: 68%; top: 56%; animation-delay: 2s;"></div>
+  <div class="sparkle" style="left: 74%; top: 64%; animation-delay: 0.5s;"></div>
+  <div class="sparkle" style="left: 82%; top: 72%; animation-delay: 1.5s;"></div>
+  <div class="sparkle" style="left: 88%; top: 45%; animation-delay: 2.5s;"></div>
+  <div class="sparkle" style="left: 92%; top: 58%; animation-delay: 0.8s;"></div>
+
+  <!-- LUCI DELLE FINESTRE del villaggio (posizione sulla tua immagine) -->
+  <div class="window-glow" style="left: 5%; top: 42%; width: 10px; height: 12px; animation-delay: 0s;"></div>
+  <div class="window-glow" style="left: 9%; top: 42%; width: 10px; height: 12px; animation-delay: 1s;"></div>
+  <div class="window-glow" style="left: 18%; top: 38%; width: 8px; height: 14px; animation-delay: 2s;"></div>
+  <div class="window-glow" style="left: 18%; top: 48%; width: 8px; height: 12px; animation-delay: 0.5s;"></div>
+  <div class="window-glow" style="left: 27%; top: 44%; width: 10px; height: 12px; animation-delay: 1.5s;"></div>
+  <div class="window-glow" style="left: 36%; top: 46%; width: 8px; height: 10px; animation-delay: 3s;"></div>
+
+  <div class="label">risonanza · villaggio</div>
 </body>
 </html>
