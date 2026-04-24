@@ -25,7 +25,6 @@
     background-repeat: no-repeat;
   }
 
-  /* NUVOLE */
   .cloud { position: absolute; pointer-events: none; }
   @keyframes drift {
     from { transform: translateX(var(--from)); }
@@ -33,7 +32,6 @@
   }
   .cloud-move { animation: drift linear infinite; }
 
-  /* UCCELLINI */
   .birds {
     position: absolute; pointer-events: none;
     animation: fly 45s linear infinite;
@@ -50,7 +48,6 @@
   .bird:nth-child(2) { animation-delay: 0.1s; }
   .bird:nth-child(3) { animation-delay: 0.2s; }
 
-  /* LUCCICHII FIUME */
   .sparkle {
     position: absolute; width: 4px; height: 4px;
     background: #FFFFFF; border-radius: 50%;
@@ -62,7 +59,6 @@
     50% { opacity: 1; transform: scale(1); }
   }
 
-  /* FINESTRE VILLAGGIO */
   .window-glow {
     position: absolute; border-radius: 2px;
     background: radial-gradient(circle, rgba(255,216,138,0.9), rgba(255,216,138,0) 70%);
@@ -74,30 +70,26 @@
     50% { opacity: 0.85; }
   }
 
-  /* ====== BOLLE DI SAPONE ====== */
+  /* ====== BOLLE DI SAPONE — ora 160px ====== */
   .bubble {
     position: absolute;
-    width: 115px; height: 115px;
+    width: 160px; height: 160px;
     border-radius: 50%;
     cursor: pointer;
     transform: translate(-50%, -50%);
     transition: transform 0.3s ease;
-    /* Alone esterno luminoso */
-    filter: drop-shadow(0 0 18px rgba(255,255,255,0.3)) drop-shadow(0 4px 12px rgba(0,0,0,0.12));
+    filter: drop-shadow(0 0 22px rgba(255,255,255,0.35)) drop-shadow(0 6px 16px rgba(0,0,0,0.15));
   }
   .bubble:active {
     transform: translate(-50%, -50%) scale(0.92);
   }
 
-  /* Sfera iridescente */
   .bubble-sphere {
     position: absolute;
     inset: 0;
     border-radius: 50%;
     background:
-      /* riflesso secondario in basso a destra */
       radial-gradient(circle at 70% 75%, rgba(180,220,255,0.35) 0%, transparent 25%),
-      /* iridescenza cangiante */
       conic-gradient(from 180deg at 50% 50%,
         rgba(255,200,220,0.18) 0deg,
         rgba(200,230,255,0.22) 60deg,
@@ -106,17 +98,14 @@
         rgba(220,200,255,0.22) 240deg,
         rgba(255,210,220,0.18) 300deg,
         rgba(255,200,220,0.18) 360deg),
-      /* base trasparente */
       radial-gradient(circle at 50% 50%, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.02) 70%, transparent 100%);
-    /* bordo sottile luminoso */
     box-shadow:
-      inset 0 0 0 1.5px rgba(255,255,255,0.6),
-      inset 0 0 20px rgba(255,255,255,0.2),
-      inset 4px -4px 20px rgba(180,210,240,0.3);
+      inset 0 0 0 2px rgba(255,255,255,0.6),
+      inset 0 0 28px rgba(255,255,255,0.22),
+      inset 5px -5px 28px rgba(180,210,240,0.3);
     animation: breathe ease-in-out infinite;
   }
 
-  /* Riflesso primario (highlight in alto-sinistra tipo bolla vera) */
   .bubble-highlight {
     position: absolute;
     top: 15%; left: 20%;
@@ -126,7 +115,6 @@
     transform: rotate(-30deg);
     pointer-events: none;
   }
-  /* Piccolo punto luce secondario */
   .bubble-highlight-small {
     position: absolute;
     top: 28%; left: 25%;
@@ -141,7 +129,6 @@
     50% { transform: scale(1.04); }
   }
 
-  /* Testo dentro la bolla */
   .bubble-text {
     position: absolute;
     inset: 0;
@@ -150,21 +137,21 @@
     align-items: center;
     justify-content: center;
     color: #FFFFFF;
-    text-shadow: 0 1px 3px rgba(30,50,80,0.5), 0 0 8px rgba(30,50,80,0.3);
+    text-shadow: 0 2px 4px rgba(30,50,80,0.55), 0 0 12px rgba(30,50,80,0.35);
     pointer-events: none;
     text-align: center;
   }
   .bubble-name {
-    font-size: 18px;
+    font-size: 24px;
     font-weight: 500;
     letter-spacing: 0.05em;
-    margin-bottom: 2px;
+    margin-bottom: 4px;
   }
   .bubble-meta {
-    font-size: 9px;
+    font-size: 12px;
     font-style: italic;
-    opacity: 0.85;
-    letter-spacing: 0.1em;
+    opacity: 0.88;
+    letter-spacing: 0.12em;
     text-transform: lowercase;
   }
 
@@ -180,7 +167,6 @@
 <body>
   <div class="background"></div>
 
-  <!-- NUVOLE -->
   <svg class="cloud cloud-move" style="width:180px; top:5%; --from: 110vw; --to: -200px; animation-duration: 140s;" viewBox="0 0 180 70">
     <ellipse cx="45" cy="40" rx="35" ry="18" fill="#FFFFFF" opacity="0.6"/>
     <ellipse cx="80" cy="32" rx="38" ry="22" fill="#FFFFFF" opacity="0.7"/>
@@ -197,14 +183,12 @@
     <ellipse cx="116" cy="38" rx="32" ry="17" fill="#FFFFFF" opacity="0.5"/>
   </svg>
 
-  <!-- UCCELLINI -->
   <svg class="birds" style="top: 22%;" width="60" height="20" viewBox="0 0 60 20">
     <path class="bird" d="M 5 10 Q 10 4 15 10 Q 20 4 25 10" stroke="#3A4155" stroke-width="1.5" fill="none" stroke-linecap="round"/>
     <path class="bird" d="M 22 14 Q 26 10 30 14 Q 34 10 38 14" stroke="#3A4155" stroke-width="1.3" fill="none" stroke-linecap="round"/>
     <path class="bird" d="M 40 11 Q 44 6 48 11 Q 52 6 56 11" stroke="#3A4155" stroke-width="1.3" fill="none" stroke-linecap="round"/>
   </svg>
 
-  <!-- LUCCICHII FIUME -->
   <div class="sparkle" style="left: 72%; top: 40%; animation-delay: 0s;"></div>
   <div class="sparkle" style="left: 78%; top: 48%; animation-delay: 1s;"></div>
   <div class="sparkle" style="left: 68%; top: 56%; animation-delay: 2s;"></div>
@@ -213,7 +197,6 @@
   <div class="sparkle" style="left: 88%; top: 45%; animation-delay: 2.5s;"></div>
   <div class="sparkle" style="left: 92%; top: 58%; animation-delay: 0.8s;"></div>
 
-  <!-- FINESTRE VILLAGGIO -->
   <div class="window-glow" style="left: 5%; top: 42%; width: 10px; height: 12px; animation-delay: 0s;"></div>
   <div class="window-glow" style="left: 9%; top: 42%; width: 10px; height: 12px; animation-delay: 1s;"></div>
   <div class="window-glow" style="left: 18%; top: 38%; width: 8px; height: 14px; animation-delay: 2s;"></div>
@@ -221,10 +204,8 @@
   <div class="window-glow" style="left: 27%; top: 44%; width: 10px; height: 12px; animation-delay: 1.5s;"></div>
   <div class="window-glow" style="left: 36%; top: 46%; width: 8px; height: 10px; animation-delay: 3s;"></div>
 
-  <!-- ====== LE 4 BOLLE ====== -->
-
-  <!-- PENSIERI (in alto, cielo) -->
-  <div class="bubble" style="left: 50%; top: 18%;">
+  <!-- BOLLE -->
+  <div class="bubble" style="left: 50%; top: 20%;">
     <div class="bubble-sphere" style="animation-duration: 5s;"></div>
     <div class="bubble-highlight"></div>
     <div class="bubble-highlight-small"></div>
@@ -234,8 +215,7 @@
     </div>
   </div>
 
-  <!-- CONTESTO (sinistra, villaggio) -->
-  <div class="bubble" style="left: 17%; top: 50%;">
+  <div class="bubble" style="left: 18%; top: 50%;">
     <div class="bubble-sphere" style="animation-duration: 6.2s; animation-delay: 0.8s;"></div>
     <div class="bubble-highlight"></div>
     <div class="bubble-highlight-small"></div>
@@ -245,28 +225,5 @@
     </div>
   </div>
 
-  <!-- EMOZIONI (destra, fiume) -->
-  <div class="bubble" style="left: 83%; top: 50%;">
-    <div class="bubble-sphere" style="animation-duration: 5.6s; animation-delay: 1.5s;"></div>
-    <div class="bubble-highlight"></div>
-    <div class="bubble-highlight-small"></div>
-    <div class="bubble-text">
-      <div class="bubble-name">Emozioni</div>
-      <div class="bubble-meta">il ruscello</div>
-    </div>
-  </div>
-
-  <!-- AZIONI (in basso, bosco) -->
-  <div class="bubble" style="left: 50%; top: 82%;">
-    <div class="bubble-sphere" style="animation-duration: 6.6s; animation-delay: 2.2s;"></div>
-    <div class="bubble-highlight"></div>
-    <div class="bubble-highlight-small"></div>
-    <div class="bubble-text">
-      <div class="bubble-name">Azioni</div>
-      <div class="bubble-meta">il bosco</div>
-    </div>
-  </div>
-
-  <div class="label">risonanza · villaggio</div>
-</body>
-</html>
+  <div class="bubble" style="left: 82%; top: 50%;">
+    <div class
