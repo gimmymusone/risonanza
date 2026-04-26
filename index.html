@@ -529,6 +529,304 @@
     0%, 100% { box-shadow: inset 0 0 0 1.5px rgba(255,255,255,0.6), inset 0 0 20px rgba(255,255,255,0.2), inset 4px -4px 20px rgba(180,210,240,0.3), 0 0 0 0 rgba(255,255,255,0.4); }
     50% { box-shadow: inset 0 0 0 1.5px rgba(255,255,255,0.6), inset 0 0 20px rgba(255,255,255,0.2), inset 4px -4px 20px rgba(180,210,240,0.3), 0 0 0 14px rgba(255,255,255,0); }
   }
+
+  /* ==========================================================
+     DIARIO — pulsante in alto a destra + pannello che scende
+     ========================================================== */
+  .diary-btn {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 90;
+    background: rgba(255,255,255,0.78);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255,255,255,0.5);
+    color: #2A3850;
+    border-radius: 999px;
+    padding: 9px 16px 9px 12px;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 6px 22px rgba(20,40,70,0.18);
+    transition: transform 0.2s ease, background 0.2s ease;
+  }
+  .diary-btn:hover { transform: translateY(-1px); background: rgba(255,255,255,0.92); }
+  .diary-btn .diary-icon { font-size: 16px; }
+  .diary-btn .diary-count {
+    background: #2A3850;
+    color: #fff;
+    font-size: 11px;
+    border-radius: 999px;
+    padding: 1px 7px;
+    min-width: 18px;
+    text-align: center;
+    line-height: 1.5;
+  }
+  .diary-btn .diary-count:empty { display: none; }
+
+  .diary-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(20, 30, 50, 0.35);
+    backdrop-filter: blur(2px);
+    z-index: 100;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .diary-overlay.open { opacity: 1; pointer-events: auto; }
+
+  .diary-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 460px;
+    background: linear-gradient(180deg, #FAF7F0 0%, #F0EBE0 100%);
+    z-index: 101;
+    transform: translateX(100%);
+    transition: transform 0.42s cubic-bezier(0.2, 0.9, 0.3, 1);
+    display: flex;
+    flex-direction: column;
+    box-shadow: -10px 0 40px rgba(20,40,70,0.25);
+  }
+  .diary-panel.open { transform: translateX(0); }
+
+  .diary-header {
+    padding: 22px 22px 12px;
+    border-bottom: 1px solid rgba(60,80,110,0.12);
+    flex-shrink: 0;
+  }
+  .diary-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+  .diary-title {
+    font-size: 22px;
+    color: #2A3850;
+    letter-spacing: 0.02em;
+    margin: 0;
+  }
+  .diary-subtitle {
+    font-size: 12px;
+    color: rgba(60,80,110,0.7);
+    letter-spacing: 0.05em;
+    margin-top: 2px;
+  }
+  .diary-close {
+    background: rgba(60,80,110,0.08);
+    border: none;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    font-size: 18px;
+    color: #2A3850;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .diary-close:hover { background: rgba(60,80,110,0.16); }
+
+  .diary-filters {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .diary-filters::-webkit-scrollbar { display: none; }
+  .diary-filter {
+    background: rgba(60,80,110,0.08);
+    border: none;
+    color: #2A3850;
+    padding: 6px 14px;
+    border-radius: 999px;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+  .diary-filter.active {
+    background: #2A3850;
+    color: #fff;
+  }
+
+  .diary-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 18px 90px;
+  }
+  .diary-empty {
+    text-align: center;
+    padding: 60px 30px;
+    color: rgba(60,80,110,0.6);
+    font-size: 14px;
+    line-height: 1.55;
+  }
+  .diary-empty .empty-icon {
+    font-size: 38px;
+    margin-bottom: 14px;
+    opacity: 0.5;
+  }
+
+  .diary-day {
+    margin-bottom: 18px;
+  }
+  .diary-day-label {
+    font-size: 11px;
+    color: rgba(60,80,110,0.6);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin: 4px 0 8px 6px;
+  }
+
+  .diary-card {
+    background: rgba(255,255,255,0.7);
+    border: 1px solid rgba(255,255,255,0.6);
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+    border-left: 3px solid var(--sphere-color, rgba(60,80,110,0.4));
+  }
+  .diary-card:hover { transform: translateX(2px); box-shadow: 0 4px 14px rgba(20,40,70,0.10); }
+  .diary-card[data-sphere="emozioni"] { --sphere-color: #6FA5C9; }
+  .diary-card[data-sphere="pensieri"] { --sphere-color: #C9C2D8; }
+  .diary-card[data-sphere="contesto"] { --sphere-color: #C9A06F; }
+  .diary-card[data-sphere="azioni"]   { --sphere-color: #8FB37A; }
+
+  .diary-card-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .diary-card-sphere {
+    font-size: 11px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: rgba(60,80,110,0.7);
+  }
+  .diary-card-time {
+    font-size: 11px;
+    color: rgba(60,80,110,0.55);
+  }
+  .diary-card-title {
+    font-size: 15px;
+    color: #2A3850;
+    font-weight: 500;
+    margin-bottom: 4px;
+    line-height: 1.35;
+  }
+  .diary-card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 6px;
+  }
+  .diary-tag {
+    font-size: 11px;
+    background: rgba(60,80,110,0.08);
+    color: rgba(60,80,110,0.85);
+    padding: 3px 9px;
+    border-radius: 999px;
+    letter-spacing: 0.02em;
+  }
+  .diary-card-text {
+    font-size: 13px;
+    color: rgba(60,80,110,0.85);
+    line-height: 1.5;
+    margin-top: 8px;
+    font-style: italic;
+    border-left: 2px solid rgba(60,80,110,0.15);
+    padding-left: 10px;
+  }
+  .diary-card-links {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px dashed rgba(60,80,110,0.15);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: rgba(60,80,110,0.7);
+    letter-spacing: 0.04em;
+  }
+  .diary-card-links .filo-icon { opacity: 0.7; }
+
+  /* Dettaglio espanso */
+  .diary-card.expanded { background: rgba(255,255,255,0.92); }
+  .diary-card-detail {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(60,80,110,0.10);
+    display: none;
+  }
+  .diary-card.expanded .diary-card-detail { display: block; }
+  .diary-detail-row {
+    font-size: 12px;
+    color: rgba(60,80,110,0.85);
+    margin-bottom: 5px;
+    line-height: 1.45;
+  }
+  .diary-detail-row b {
+    color: rgba(60,80,110,0.6);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    font-size: 10px;
+    margin-right: 6px;
+  }
+  .diary-linked-voice {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: rgba(60,80,110,0.06);
+    border: none;
+    border-left: 2px solid var(--sphere-color, rgba(60,80,110,0.4));
+    padding: 8px 10px;
+    border-radius: 8px;
+    margin-top: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    color: #2A3850;
+  }
+  .diary-linked-voice:hover { background: rgba(60,80,110,0.12); }
+  .diary-linked-voice[data-sphere="emozioni"] { --sphere-color: #6FA5C9; }
+  .diary-linked-voice[data-sphere="pensieri"] { --sphere-color: #C9C2D8; }
+  .diary-linked-voice[data-sphere="contesto"] { --sphere-color: #C9A06F; }
+  .diary-linked-voice[data-sphere="azioni"]   { --sphere-color: #8FB37A; }
+
+  .diary-detail-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .diary-detail-btn {
+    flex: 1;
+    background: rgba(60,80,110,0.08);
+    border: none;
+    color: #2A3850;
+    padding: 8px;
+    border-radius: 10px;
+    font-size: 12px;
+    cursor: pointer;
+    letter-spacing: 0.04em;
+  }
+  .diary-detail-btn:hover { background: rgba(60,80,110,0.16); }
+  .diary-detail-btn.danger { color: #B85A5A; }
+  .diary-detail-btn.danger:hover { background: rgba(184,90,90,0.12); }
 </style>
 </head>
 <body>
@@ -629,6 +927,37 @@
   </div>
 
   <div class="toast" id="toast">Voce salvata nel Villaggio</div>
+
+  <!-- ==========================================================
+       DIARIO — vista di tutte le voci salvate
+       ========================================================== -->
+  <button class="diary-btn" id="diaryBtn" aria-label="Apri il diario">
+    <span class="diary-icon">📔</span>
+    <span>Diario</span>
+    <span class="diary-count" id="diaryCount"></span>
+  </button>
+
+  <div class="diary-overlay" id="diaryOverlay"></div>
+
+  <aside class="diary-panel" id="diaryPanel" aria-hidden="true">
+    <div class="diary-header">
+      <div class="diary-title-row">
+        <div>
+          <h2 class="diary-title">Il tuo diario</h2>
+          <div class="diary-subtitle">tutte le voci che hai tessuto</div>
+        </div>
+        <button class="diary-close" id="diaryClose" aria-label="Chiudi">×</button>
+      </div>
+      <div class="diary-filters" id="diaryFilters">
+        <button class="diary-filter active" data-filter="tutte">Tutte</button>
+        <button class="diary-filter" data-filter="emozioni">💧 Emozioni</button>
+        <button class="diary-filter" data-filter="pensieri">☁️ Pensieri</button>
+        <button class="diary-filter" data-filter="contesto">🏘 Contesto</button>
+        <button class="diary-filter" data-filter="azioni">🌳 Azioni</button>
+      </div>
+    </div>
+    <div class="diary-list" id="diaryList"></div>
+  </aside>
 
 <script>
 /* ==========================================================
@@ -1541,15 +1870,25 @@ function formatSfumatura() {
   return v;
 }
 
-function labelOf(sphere, key, value) {
+function labelOf(sphere, key, value, tipoCtx) {
   const conf = SPHERES[sphere];
+  if (!conf) return value;
+  const tipoUse = tipoCtx || state.tipo;
   for (const step of conf.steps) {
     if (step.key !== key) continue;
     let opts = step.options;
-    if (step.optionsBy) opts = step.optionsBy[state.tipo] || [];
-    if (!opts) continue;
-    const found = opts.find(o => o.value === value);
-    if (found) return found.label;
+    if (step.optionsBy) opts = step.optionsBy[tipoUse] || [];
+    if (opts) {
+      const found = opts.find(o => o.value === value);
+      if (found) return found.label;
+    }
+    // chips (sfumature) sono stringhe — le restituisco invariate
+    let chips = step.chips;
+    if (step.chipsBy) {
+      const qualUse = (tipoCtx ? value : null); // non sempre disponibile
+      chips = step.chipsBy[state.qualita] || [];
+    }
+    if (Array.isArray(chips) && chips.includes(value)) return value;
   }
   return value;
 }
@@ -1626,6 +1965,7 @@ function saveVoice(opts = {}) {
   }
   voices.push(voice);
   try { localStorage.setItem("risonanza_voices", JSON.stringify(voices)); } catch (e) {}
+  updateDiaryCount();
   if (!opts.silent) {
     showToast(chain.originVoiceId ? "Filo intrecciato nel Villaggio" : "Voce salvata nel Villaggio");
     closeSphere();
@@ -1638,6 +1978,288 @@ function showToast(msg) {
   toastEl.classList.add("show");
   setTimeout(() => toastEl.classList.remove("show"), 2400);
 }
+
+/* ==========================================================
+   DIARIO — vista di tutte le voci salvate
+   ========================================================== */
+const SPHERE_LABEL = {
+  emozioni: { name: "Emozioni", place: "il ruscello", icon: "💧" },
+  pensieri: { name: "Pensieri", place: "il cielo",    icon: "☁️" },
+  contesto: { name: "Contesto", place: "il villaggio",icon: "🏘" },
+  azioni:   { name: "Azioni",   place: "la foresta",  icon: "🌳" }
+};
+
+let diaryFilter = "tutte";
+let diaryExpandedId = null;
+
+const diaryBtn      = document.getElementById("diaryBtn");
+const diaryCountEl  = document.getElementById("diaryCount");
+const diaryOverlay  = document.getElementById("diaryOverlay");
+const diaryPanel    = document.getElementById("diaryPanel");
+const diaryClose    = document.getElementById("diaryClose");
+const diaryListEl   = document.getElementById("diaryList");
+const diaryFiltersEl= document.getElementById("diaryFilters");
+
+function updateDiaryCount() {
+  const n = (voices || []).length;
+  diaryCountEl.textContent = n > 0 ? String(n) : "";
+}
+
+function openDiary() {
+  // ricarica da localStorage in caso di modifiche concorrenti
+  voices = JSON.parse(localStorage.getItem("risonanza_voices") || "[]");
+  diaryExpandedId = null;
+  renderDiary();
+  diaryOverlay.classList.add("open");
+  diaryPanel.classList.add("open");
+  diaryPanel.setAttribute("aria-hidden", "false");
+}
+
+function closeDiary() {
+  diaryOverlay.classList.remove("open");
+  diaryPanel.classList.remove("open");
+  diaryPanel.setAttribute("aria-hidden", "true");
+}
+
+function relativeTime(iso) {
+  const d = new Date(iso);
+  const now = new Date();
+  const diff = (now - d) / 1000;
+  if (diff < 60) return "adesso";
+  if (diff < 3600) return Math.floor(diff/60) + " min fa";
+  const sameDay = d.toDateString() === now.toDateString();
+  const yesterday = new Date(now); yesterday.setDate(now.getDate() - 1);
+  const isYesterday = d.toDateString() === yesterday.toDateString();
+  const hh = String(d.getHours()).padStart(2,"0");
+  const mm = String(d.getMinutes()).padStart(2,"0");
+  if (sameDay) return hh + ":" + mm;
+  if (isYesterday) return "ieri " + hh + ":" + mm;
+  return d.toLocaleDateString("it-IT", { day:"numeric", month:"short" }) + " " + hh + ":" + mm;
+}
+
+function dayKey(iso) {
+  const d = new Date(iso);
+  const now = new Date();
+  const yest = new Date(now); yest.setDate(now.getDate() - 1);
+  if (d.toDateString() === now.toDateString()) return "Oggi";
+  if (d.toDateString() === yest.toDateString()) return "Ieri";
+  return d.toLocaleDateString("it-IT", { weekday:"long", day:"numeric", month:"long" });
+}
+
+function safeLabel(sphere, key, value, tipoCtx) {
+  if (value === undefined || value === null || value === "") return null;
+  if (Array.isArray(value)) {
+    return value.map(v => safeLabel(sphere, key, v, tipoCtx)).filter(Boolean).join(", ");
+  }
+  try {
+    const out = labelOf(sphere, key, value, tipoCtx);
+    return out || String(value);
+  } catch (e) { return String(value); }
+}
+
+function voiceTitle(v) {
+  const s = v.state || {};
+  const sphere = v.sphere;
+  const tipoCtx = s.tipo;
+  const qualita = safeLabel(sphere, "qualita", s.qualita, tipoCtx);
+  let sfumatura = null;
+  if (s.sfumatura) {
+    const arr = Array.isArray(s.sfumatura) ? s.sfumatura : [s.sfumatura];
+    sfumatura = arr.slice(0, 2).join(", ");
+  }
+  if (qualita && sfumatura) return qualita + " · " + sfumatura;
+  if (qualita) return qualita;
+  if (sfumatura) return sfumatura;
+  if (s.tipo) return safeLabel(sphere, "tipo", s.tipo, tipoCtx);
+  return SPHERE_LABEL[sphere].name;
+}
+
+function voiceTags(v) {
+  const s = v.state || {};
+  const tags = [];
+  const tipoCtx = s.tipo;
+  const tipoLbl = safeLabel(v.sphere, "tipo", s.tipo, tipoCtx);
+  if (tipoLbl) tags.push(tipoLbl);
+  const ancLbl = safeLabel(v.sphere, "ancoraggio", s.ancoraggio, tipoCtx);
+  if (ancLbl) tags.push(ancLbl);
+  const innLbl = safeLabel(v.sphere, "innesco", s.innesco, tipoCtx);
+  if (innLbl) tags.push(innLbl);
+  if (s.ricorrenza) {
+    const map = { si: "torna spesso", no: "prima volta", forse: "non lo so" };
+    if (map[s.ricorrenza]) tags.push(map[s.ricorrenza]);
+  }
+  if (typeof s.intensita === "number") tags.push("intensità " + s.intensita + "/5");
+  return tags;
+}
+
+function escapeHTML(str) {
+  return String(str)
+    .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+}
+
+function renderDiary() {
+  const all = (voices || []).slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  const filtered = diaryFilter === "tutte" ? all : all.filter(v => v.sphere === diaryFilter);
+
+  if (filtered.length === 0) {
+    diaryListEl.innerHTML = `
+      <div class="diary-empty">
+        <div class="empty-icon">🌿</div>
+        <div>${all.length === 0 ? "Il tuo Villaggio \u00e8 ancora in attesa.<br>Tocca una bolla per iniziare a tessere." : "Nessuna voce in questa sfera."}</div>
+      </div>`;
+    return;
+  }
+
+  // raggruppa per giorno
+  const groups = {};
+  const order = [];
+  for (const v of filtered) {
+    const k = dayKey(v.createdAt);
+    if (!groups[k]) { groups[k] = []; order.push(k); }
+    groups[k].push(v);
+  }
+
+  let html = "";
+  for (const k of order) {
+    html += `<div class="diary-day"><div class="diary-day-label">${escapeHTML(k)}</div>`;
+    for (const v of groups[k]) {
+      html += renderCard(v);
+    }
+    html += `</div>`;
+  }
+  diaryListEl.innerHTML = html;
+
+  // event delegation
+  diaryListEl.querySelectorAll(".diary-card").forEach(card => {
+    card.addEventListener("click", (e) => {
+      if (e.target.closest(".diary-detail-btn") || e.target.closest(".diary-linked-voice")) return;
+      const id = card.dataset.id;
+      diaryExpandedId = (diaryExpandedId === id) ? null : id;
+      renderDiary();
+    });
+  });
+  diaryListEl.querySelectorAll(".diary-linked-voice").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      diaryExpandedId = btn.dataset.targetId;
+      renderDiary();
+      // scrolla la voce in vista
+      requestAnimationFrame(() => {
+        const target = diaryListEl.querySelector(`.diary-card[data-id="${btn.dataset.targetId}"]`);
+        if (target) target.scrollIntoView({ behavior: "smooth", block: "center" });
+      });
+    });
+  });
+  diaryListEl.querySelectorAll(".diary-detail-btn[data-action=delete]").forEach(btn => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const id = btn.dataset.id;
+      if (!confirm("Eliminare questa voce dal Villaggio? L'azione non si pu\u00f2 annullare.")) return;
+      voices = voices.filter(v => v.id !== id);
+      // togli i link che puntavano a questa voce
+      voices.forEach(v => {
+        if (Array.isArray(v.links)) v.links = v.links.filter(lid => lid !== id);
+      });
+      try { localStorage.setItem("risonanza_voices", JSON.stringify(voices)); } catch (err) {}
+      diaryExpandedId = null;
+      updateDiaryCount();
+      renderDiary();
+      showToast("Voce rimossa dal Villaggio");
+    });
+  });
+}
+
+function renderCard(v) {
+  const lbl = SPHERE_LABEL[v.sphere] || { name: v.sphere, place: "", icon: "•" };
+  const title = voiceTitle(v);
+  const tags = voiceTags(v);
+  const expanded = diaryExpandedId === v.id;
+  const linksCount = Array.isArray(v.links) ? v.links.length : 0;
+
+  let detailHtml = "";
+  if (expanded) {
+    const s = v.state || {};
+    const rows = [];
+    const tipoCtx = s.tipo;
+    if (s.tipo)        rows.push(["Tipo",        safeLabel(v.sphere, "tipo", s.tipo, tipoCtx)]);
+    if (s.qualita)     rows.push(["Qualit\u00e0",safeLabel(v.sphere, "qualita", s.qualita, tipoCtx)]);
+    if (s.sfumatura)   rows.push(["Sfumature",   safeLabel(v.sphere, "sfumatura", s.sfumatura, tipoCtx)]);
+    if (s.ancoraggio)  rows.push(["Ancoraggio",  safeLabel(v.sphere, "ancoraggio", s.ancoraggio, tipoCtx)]);
+    if (s.innesco)     rows.push(["Innesco",     safeLabel(v.sphere, "innesco", s.innesco, tipoCtx)]);
+    if (s.collegamento)rows.push(["Per",         safeLabel(v.sphere, "collegamento", s.collegamento, tipoCtx)]);
+    if (s.body)        rows.push(["Nel corpo",   safeLabel(v.sphere, "body", s.body, tipoCtx)]);
+    if (typeof s.intensita === "number") rows.push(["Intensit\u00e0", s.intensita + "/5"]);
+    if (typeof s.costo === "number" || typeof s.ritorno === "number") {
+      rows.push(["Energia", `costo ${s.costo ?? "\u2014"}/5 \u00b7 ritorno ${s.ritorno ?? "\u2014"}/5`]);
+    }
+    if (s.ricorrenza) {
+      const map = { si: "S\u00ec, torna spesso", no: "No, prima volta", forse: "Non lo so" };
+      rows.push(["Ricorrenza", map[s.ricorrenza] || s.ricorrenza]);
+    }
+
+    let rowsHtml = rows.map(r => `<div class="diary-detail-row"><b>${escapeHTML(r[0])}</b>${escapeHTML(r[1])}</div>`).join("");
+
+    // voci collegate
+    let linkedHtml = "";
+    if (linksCount > 0) {
+      const linkedVoices = (v.links || []).map(id => voices.find(x => x.id === id)).filter(Boolean);
+      if (linkedVoices.length > 0) {
+        linkedHtml = `<div class="diary-detail-row" style="margin-top:10px;"><b>Fili tessuti</b></div>` +
+          linkedVoices.map(lv => {
+            const lLbl = SPHERE_LABEL[lv.sphere] || {};
+            return `<button class="diary-linked-voice" data-target-id="${escapeHTML(lv.id)}" data-sphere="${escapeHTML(lv.sphere)}">${lLbl.icon || "\u2022"} ${escapeHTML(voiceTitle(lv))} <span style="opacity:0.6">\u00b7 ${escapeHTML(lLbl.name || lv.sphere)}</span></button>`;
+          }).join("");
+      }
+    }
+
+    const fullText = s.testo ? `<div class="diary-detail-row" style="margin-top:10px;"><b>Le tue parole</b></div><div class="diary-card-text" style="margin-top:4px;">${escapeHTML(s.testo)}</div>` : "";
+
+    detailHtml = `
+      <div class="diary-card-detail">
+        ${rowsHtml}
+        ${fullText}
+        ${linkedHtml}
+        <div class="diary-detail-actions">
+          <button class="diary-detail-btn danger" data-action="delete" data-id="${escapeHTML(v.id)}">Elimina</button>
+        </div>
+      </div>`;
+  }
+
+  const shortText = v.state && v.state.testo ? `<div class="diary-card-text">«${escapeHTML(v.state.testo.length > 130 ? v.state.testo.slice(0, 130) + "\u2026" : v.state.testo)}»</div>` : "";
+  const linksHtml = linksCount > 0 ? `<div class="diary-card-links"><span class="filo-icon">•—•</span> ${linksCount} ${linksCount === 1 ? "filo intrecciato" : "fili intrecciati"}</div>` : "";
+
+  return `
+    <div class="diary-card ${expanded ? "expanded" : ""}" data-sphere="${escapeHTML(v.sphere)}" data-id="${escapeHTML(v.id)}">
+      <div class="diary-card-head">
+        <span class="diary-card-sphere">${lbl.icon} ${escapeHTML(lbl.name)} \u00b7 ${escapeHTML(lbl.place)}</span>
+        <span class="diary-card-time">${escapeHTML(relativeTime(v.createdAt))}</span>
+      </div>
+      <div class="diary-card-title">${escapeHTML(title)}</div>
+      ${tags.length ? `<div class="diary-card-tags">${tags.map(t => `<span class="diary-tag">${escapeHTML(t)}</span>`).join("")}</div>` : ""}
+      ${shortText}
+      ${linksHtml}
+      ${detailHtml}
+    </div>`;
+}
+
+diaryBtn.addEventListener("click", openDiary);
+diaryClose.addEventListener("click", closeDiary);
+diaryOverlay.addEventListener("click", closeDiary);
+diaryFiltersEl.addEventListener("click", (e) => {
+  const btn = e.target.closest(".diary-filter");
+  if (!btn) return;
+  diaryFilter = btn.dataset.filter;
+  diaryFiltersEl.querySelectorAll(".diary-filter").forEach(b => b.classList.toggle("active", b === btn));
+  diaryExpandedId = null;
+  renderDiary();
+});
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && diaryPanel.classList.contains("open")) closeDiary();
+});
+
+// inizializza il contatore al caricamento
+updateDiaryCount();
 </script>
 </body>
 </html>
