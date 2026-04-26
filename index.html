@@ -632,8 +632,12 @@
 
 <script>
 /* ==========================================================
-   RISONANZA — Logica delle Sfere v2
-   Pattern unificato: A) Tipo → B) Qualità + Sfumatura → C) Ancoraggio → D) Testo + Anmy + Ricorrenza
+   RISONANZA — Logica delle Sfere v3
+   Pattern: A) Tipo → B) Qualità + Sfumatura → C) Ancoraggio → D) Testo + Anmy + Ricorrenza
+   v3 aggiunge:
+   - Collegamenti reali tra voci (mini-flusso a catena con pre-compilazione)
+   - Multi-selezione sfumature dove la realtà è sfaccettata
+   - Skip intelligente delle domande non rilevanti per il contesto
    ========================================================== */
 
 const SPHERES = {
@@ -641,10 +645,8 @@ const SPHERES = {
     title: "Pensieri",
     subtitle: "il cielo",
     steps: [
-      // A. Tipo
-      {
-        kind: "options",
-        key: "tipo",
+      { id: "tipo",
+        kind: "options", key: "tipo",
         question: "Come è arrivato questo pensiero?",
         hint: "Nota la genesi: sei stato attraversato o l'hai costruito tu?",
         layout: "grid-2",
@@ -653,10 +655,8 @@ const SPHERES = {
           { value: "creato",   icon: "🪶", label: "L'ho creato",  desc: "l'ho costruito io" }
         ]
       },
-      // B1. Qualità ternaria
-      {
-        kind: "options",
-        key: "qualita",
+      { id: "qualita",
+        kind: "options", key: "qualita",
         question: "Che forma ha nel cielo?",
         hint: "Una sola scelta. Va bene anche solo a sensazione.",
         layout: "grid-3",
@@ -666,23 +666,18 @@ const SPHERES = {
           { value: "vento",  icon: "💨", label: "Vento" }
         ]
       },
-      // B2. Sfumatura — dipende da qualità
-      {
-        kind: "chips",
-        key: "sfumatura",
+      { id: "sfumatura",
+        kind: "chips", key: "sfumatura", optional: true,
         question: "Quale sfumatura ti somiglia di più?",
         hint: "Se nessuna è giusta, salta pure.",
-        optional: true,
         chipsBy: {
           luce:   ["Intuizione", "Idea che sblocca", "Comprensione", "Ricordo che scalda"],
           nuvola: ["Rimuginio", "Dubbio che pesa", "Pensiero che torna", "Confusione"],
           vento:  ["Pensiero veloce", "Distrazione", "Flusso di idee", "Slancio creativo"]
         }
       },
-      // C. Ancoraggio — Tempo
-      {
-        kind: "options",
-        key: "tempo",
+      { id: "tempo",
+        kind: "options", key: "tempo",
         question: "Quando si sta muovendo?",
         layout: "grid-3",
         options: [
@@ -691,23 +686,18 @@ const SPHERES = {
           { value: "da_un_po", icon: "🌀", label: "Da un po'" }
         ]
       },
-      // C. Ancoraggio — Ambito
-      {
-        kind: "chips",
-        key: "ambito",
+      { id: "ambito",
+        kind: "chips", key: "ambito", multi: true,
         question: "In che ambito vive?",
         hint: "Anche più di uno, se ti aiuta.",
-        multi: true,
         chips: ["Lavoro / Studio", "Relazioni", "Sé", "Senso / Futuro", "Corpo", "Mondo"]
       },
-      // D. Testo + Anmy + Ricorrenza
-      {
-        kind: "text",
-        key: "testo",
+      { id: "testo",
+        kind: "text", key: "testo", anmyMirror: true,
         question: "Scrivilo come ti viene.",
         hint: "Anmy specchierà solo ciò che hai scritto, niente interpretazioni.",
-        anmyMirror: true,
-        recurrenceQuestion: "È un pensiero che torna?"
+        recurrenceQuestion: ({ state }) =>
+          state.tipo === "creato" ? "È un modo di pensare che torna?" : "È un pensiero che torna?"
       }
     ]
   },
@@ -716,9 +706,8 @@ const SPHERES = {
     title: "Emozioni",
     subtitle: "il ruscello",
     steps: [
-      {
-        kind: "options",
-        key: "tipo",
+      { id: "tipo",
+        kind: "options", key: "tipo",
         question: "Come è entrata nel ruscello?",
         hint: "Un'onda episodica o un clima diffuso?",
         layout: "grid-2",
@@ -727,9 +716,8 @@ const SPHERES = {
           { value: "clima",  icon: "🌫", label: "Un clima", desc: "stato di sottofondo" }
         ]
       },
-      {
-        kind: "options",
-        key: "qualita",
+      { id: "qualita",
+        kind: "options", key: "qualita",
         question: "Che forma sta prendendo l'acqua?",
         layout: "grid-3",
         options: [
@@ -738,23 +726,22 @@ const SPHERES = {
           { value: "vortice",  icon: "🌀", label: "Vortice" }
         ]
       },
-      {
-        kind: "chips",
-        key: "sfumatura",
-        question: "Quale parola si avvicina di più?",
-        hint: "Se non c'è, salta.",
-        optional: true,
+      { id: "sfumatura",
+        kind: "chips", key: "sfumatura", optional: true, multi: true,
+        question: "Quali parole si avvicinano?",
+        hint: "Anche più di una, se la realtà è sfaccettata.",
         chipsBy: {
           sorgente: ["Gioia", "Tenerezza", "Curiosità", "Gratitudine"],
           corrente: ["Rabbia", "Desiderio", "Entusiasmo", "Paura"],
           vortice:  ["Ansia", "Tristezza", "Vergogna", "Disagio diffuso"]
         }
       },
-      {
-        kind: "options",
-        key: "innesco",
+      { id: "innesco",
+        kind: "options", key: "innesco",
         question: "A cosa la colleghi?",
         hint: "Sceglierne una apre un possibile filo verso un'altra bolla.",
+        // Saltato se l'utente arriva da una voce precedente che ha già definito l'innesco
+        skipIf: ({ chain }) => chain.preset && chain.preset.innesco != null,
         layout: "grid-2",
         options: [
           { value: "persona",  icon: "👤", label: "Una persona", desc: "→ Contesto" },
@@ -764,26 +751,24 @@ const SPHERES = {
           { value: "corpo",    icon: "🌫", label: "Niente di preciso", desc: "il corpo, l'aria" }
         ]
       },
-      {
-        kind: "body",
-        key: "felt_sense",
+      { id: "felt_sense",
+        kind: "body", key: "felt_sense", optional: true,
         question: "Dove la senti nel corpo?",
         hint: "Anche 'non la trovo' è una risposta giusta.",
-        optional: true
+        // Skip intelligente: un "clima" diffuso è raramente localizzabile
+        skipIf: ({ state }) => state.tipo === "clima"
       },
-      {
-        kind: "slider",
-        key: "intensita",
+      { id: "intensita",
+        kind: "slider", key: "intensita",
         question: "Quanto occupa spazio adesso?",
         hint: "Non quanto è 'forte' — quanto è presente.",
         min: 1, max: 5, defaultValue: 3
       },
-      {
-        kind: "text",
-        key: "testo",
+      { id: "testo",
+        kind: "text", key: "testo", anmyMirror: true,
         question: "Raccontala.",
-        anmyMirror: true,
-        recurrenceQuestion: "Questa forma l'hai già vista scorrere?"
+        recurrenceQuestion: ({ state }) =>
+          state.tipo === "clima" ? "Questo clima torna spesso?" : "Questa forma l'hai già vista scorrere?"
       }
     ]
   },
@@ -792,21 +777,19 @@ const SPHERES = {
     title: "Azioni",
     subtitle: "la foresta",
     steps: [
-      {
-        kind: "options",
-        key: "tipo",
+      { id: "tipo",
+        kind: "options", key: "tipo",
         question: "Dove è cresciuta nella foresta?",
         hint: "Per te, per altri, o da sola?",
         layout: "grid-2",
         options: [
-          { value: "bosco",    icon: "🌲", label: "Bosco",    desc: "azione di cura per sé" },
-          { value: "frutteto", icon: "🍎", label: "Frutteto", desc: "azione data al mondo / agli altri" },
+          { value: "bosco",      icon: "🌲", label: "Bosco",    desc: "azione di cura per sé" },
+          { value: "frutteto",   icon: "🍎", label: "Frutteto", desc: "azione data al mondo / agli altri" },
           { value: "selvatiche", icon: "🌿", label: "Piante Selvatiche", desc: "abitudine, pattern, automatismo" }
         ]
       },
-      {
-        kind: "options",
-        key: "qualita",
+      { id: "qualita",
+        kind: "options", key: "qualita",
         question: "Che pianta è?",
         layout: "grid-3",
         options: [
@@ -815,31 +798,32 @@ const SPHERES = {
           { value: "edera",  icon: "🍃", label: "Edera" }
         ]
       },
-      {
-        kind: "chips",
-        key: "sfumatura",
+      { id: "sfumatura",
+        kind: "chips", key: "sfumatura", optional: true,
         question: "Quale sfumatura coglie meglio?",
-        optional: true,
         chipsBy: {
           seme:   ["Primo passo", "Tentativo", "Voglia di provare", "Fuori dal solito"],
           albero: ["Costanza", "Routine che nutre", "Impegno mantenuto", "Passione coltivata"],
           edera:  ["Ho ceduto al solito", "Pilota automatico", "Mi distraggo", "Mi rifugio"]
         }
       },
-      {
-        kind: "double-slider",
-        key: "energia",
+      { id: "energia",
+        kind: "double-slider", key: "energia",
         question: "Quanta energia ha chiesto, quanta ne ha restituita?",
         hint: "Lettura soggettiva, non un voto.",
         labels: ["Costo", "Ritorno"],
-        min: 1, max: 5
+        min: 1, max: 5,
+        // Skip per Selvatiche: l'automatismo non si misura in costo/ritorno conscio
+        skipIf: ({ state }) => state.tipo === "selvatiche"
       },
-      {
-        // Collegamento: obbligatorio se Frutteto, suggerito altrove
-        kind: "options",
-        key: "collegamento",
+      { id: "collegamento",
+        kind: "options", key: "collegamento",
         question: "L'hai fatta in connessione con cosa?",
         hint: "Per il Frutteto serve indicare un destinatario.",
+        // Skip per Bosco: per sé per definizione, non serve chiederlo
+        skipIf: ({ state }) => state.tipo === "bosco",
+        // Skip se arriva da una voce con persona/luogo già definiti
+        skipIf2: ({ chain }) => chain.preset && (chain.preset.persona || chain.preset.luogo),
         layout: "grid-2",
         options: [
           { value: "persona",  icon: "👤", label: "Per/con una persona", desc: "→ Contesto" },
@@ -849,11 +833,9 @@ const SPHERES = {
           { value: "solo_me",  icon: "🌟", label: "Per me e basta", desc: "" }
         ]
       },
-      {
-        kind: "text",
-        key: "testo",
+      { id: "testo",
+        kind: "text", key: "testo", anmyMirror: true,
         question: "Racconta com'è andata.",
-        anmyMirror: true,
         recurrenceQuestion: "Questa pianta è già cresciuta altre volte?"
       }
     ]
@@ -863,9 +845,8 @@ const SPHERES = {
     title: "Contesto",
     subtitle: "il villaggio",
     steps: [
-      {
-        kind: "options",
-        key: "tipo",
+      { id: "tipo",
+        kind: "options", key: "tipo",
         question: "Di cosa parliamo?",
         layout: "grid-2",
         options: [
@@ -873,10 +854,8 @@ const SPHERES = {
           { value: "ambiente", icon: "🏞", label: "Un ambiente" }
         ]
       },
-      {
-        // Qualità diversa a seconda del tipo
-        kind: "options",
-        key: "qualita",
+      { id: "qualita",
+        kind: "options", key: "qualita",
         question: "Che qualità ha avuto?",
         layout: "grid-3",
         optionsBy: {
@@ -892,12 +871,10 @@ const SPHERES = {
           ]
         }
       },
-      {
-        kind: "chips",
-        key: "sfumatura",
-        question: "Quale sfumatura risuona?",
-        hint: "Direttamente dalla mappa con Andrea.",
-        optional: true,
+      { id: "sfumatura",
+        kind: "chips", key: "sfumatura", optional: true, multi: true,
+        question: "Quali sfumature risuonano?",
+        hint: "Anche più di una. Direttamente dalla mappa con Andrea.",
         chipsBy: {
           sintonia:   ["Momento che risuona", "Dialogo stimolante", "Senso di vicinanza", "Nuovo incontro"],
           tensione:   ["Senso di disallineamento", "Senso di freddezza", "Difficoltà a comunicare", "Senso di annullamento"],
@@ -907,11 +884,11 @@ const SPHERES = {
           ricorrenza: ["Dinamica che si ripete", "Abitudini sane", "Mi sento in gabbia"]
         }
       },
-      {
-        // Ancoraggio — dipende dal tipo
-        kind: "options",
-        key: "ancoraggio",
+      { id: "ancoraggio",
+        kind: "options", key: "ancoraggio",
         question: "Dove la collochi nel villaggio?",
+        // Saltato se arriva pre-compilato dalla catena
+        skipIf: ({ chain, state }) => chain.preset && chain.preset.ancoraggio === state.ancoraggio && state.ancoraggio,
         layout: "grid-2",
         optionsBy: {
           persona: [
@@ -932,11 +909,9 @@ const SPHERES = {
           ]
         }
       },
-      {
-        kind: "text",
-        key: "testo",
+      { id: "testo",
+        kind: "text", key: "testo", anmyMirror: true,
         question: "Aggiungi le tue parole.",
-        anmyMirror: true,
         recurrenceQuestion: "Questo torna spesso nel tuo Villaggio?"
       }
     ]
@@ -944,29 +919,79 @@ const SPHERES = {
 };
 
 /* ==========================================================
-   Logica dei collegamenti obbligatori (dal documento §6.1)
+   COLLEGAMENTI: regole obbligatori / suggeriti + pre-compilazione
    ========================================================== */
-function isLinkRequired(sphere, state) {
-  // Frutteto → serve un destinatario (persona o luogo)
-  if (sphere === "azioni" && state.tipo === "frutteto") return true;
-  // Contesto · Persona · Tensione/Distanza → serve almeno una sfumatura emotiva accennata
-  if (sphere === "contesto" && state.tipo === "persona" && (state.qualita === "tensione" || state.qualita === "distanza")) return true;
-  // Contesto · Ambiente · Ricorrenza "Mi sento in gabbia"
-  if (sphere === "contesto" && state.qualita === "ricorrenza" && state.sfumatura && state.sfumatura.includes("Mi sento in gabbia")) return true;
-  return false;
+function getRequiredLink(sphere, state) {
+  if (sphere === "azioni" && state.tipo === "frutteto") {
+    return {
+      target: "contesto",
+      preset: { tipo: "persona" },
+      reason: "Un frutto si raccoglie sempre per qualcuno. Aggiungi la persona o il gruppo a cui era diretta."
+    };
+  }
+  if (sphere === "contesto" && state.tipo === "persona" && (state.qualita === "tensione" || state.qualita === "distanza")) {
+    return {
+      target: "emozioni",
+      preset: { innesco: "persona", originPersona: state.ancoraggio },
+      reason: "Una " + (state.qualita === "tensione" ? "tensione" : "distanza") + " relazionale lascia sempre un'eco emotiva. Dalle una forma."
+    };
+  }
+  if (sphere === "contesto" && state.qualita === "ricorrenza" && Array.isArray(state.sfumatura) && state.sfumatura.includes("Mi sento in gabbia")) {
+    return {
+      target: "emozioni",
+      preset: { innesco: "luogo" },
+      reason: "Un senso di gabbia chiede uno sguardo affettivo. Cosa scorre nel ruscello?"
+    };
+  }
+  return null;
+}
+
+function getSuggestedLink(sphere, state) {
+  if (sphere === "emozioni" && state.qualita === "vortice") {
+    return {
+      target: state.innesco === "persona" ? "contesto" : (state.innesco === "pensiero" ? "pensieri" : null),
+      preset: state.innesco === "persona" ? { tipo: "persona" } : (state.innesco === "pensiero" ? { tipo: "arrivato" } : {}),
+      reason: "Un Vortice è denso. Vuoi metterci accanto qualcosa che lo accompagna?"
+    };
+  }
+  if (sphere === "pensieri" && state.qualita === "nuvola" && Array.isArray(state.sfumatura) ? state.sfumatura.includes("Rimuginio") : state.sfumatura === "Rimuginio") {
+    return {
+      target: "contesto",
+      preset: {},
+      reason: "Su chi o cosa stai rimuginando? Apri il villaggio e annotalo."
+    };
+  }
+  if (sphere === "azioni" && state.tipo === "bosco" && state.energia && state.energia.ritorno >= 4) {
+    return {
+      target: "emozioni",
+      preset: { tipo: "onda" },
+      reason: "Un'azione che ti ha nutrito merita di essere riconosciuta anche nel ruscello."
+    };
+  }
+  if (sphere === "azioni" && state.tipo === "selvatiche") {
+    return {
+      target: "emozioni",
+      preset: { tipo: "onda", innesco: "azione" },
+      reason: "Cosa l'ha innescata? Vuoi annotarne l'eco emotiva?"
+    };
+  }
+  return null;
 }
 
 /* ==========================================================
-   STATE
+   STATE GLOBALE + persistenza
    ========================================================== */
+let voices = [];
+try {
+  voices = JSON.parse(localStorage.getItem("risonanza_voices") || "[]");
+} catch (e) { voices = []; }
+
 let currentSphere = null;
 let currentStep = 0;
 let state = {};
-let voiceCount = 0;
+let chain = { preset: null, originVoiceId: null, originSphere: null, queue: [] };
 
-/* ==========================================================
-   DOM
-   ========================================================== */
+/* DOM */
 const overlay = document.getElementById("flowOverlay");
 const titleEl = document.getElementById("flowTitle");
 const subtitleEl = document.getElementById("flowSubtitle");
@@ -984,13 +1009,27 @@ document.querySelectorAll(".bubble").forEach(el => {
   el.addEventListener("click", () => openSphere(el.dataset.sphere));
 });
 
-function openSphere(sphereKey) {
+function openSphere(sphereKey, opts = {}) {
   currentSphere = sphereKey;
   currentStep = 0;
   state = {};
+  // se arriviamo da una catena, pre-compila lo stato
+  if (opts.preset) {
+    Object.assign(state, opts.preset);
+    chain = {
+      preset: opts.preset,
+      originVoiceId: opts.originVoiceId || null,
+      originSphere: opts.originSphere || null,
+      queue: opts.queue || []
+    };
+  } else {
+    chain = { preset: null, originVoiceId: null, originSphere: null, queue: [] };
+  }
   const conf = SPHERES[sphereKey];
-  titleEl.textContent = conf.title;
-  subtitleEl.textContent = conf.subtitle;
+  titleEl.textContent = conf.title + (chain.preset ? " · filo" : "");
+  subtitleEl.textContent = chain.preset ? "collegata a " + (SPHERES[chain.originSphere]?.title || "") : conf.subtitle;
+  // se la prima domanda è da skippare avanza
+  jumpToFirstValidStep();
   buildProgress();
   renderStep();
   overlay.classList.add("active");
@@ -1001,21 +1040,47 @@ function closeSphere() {
   setTimeout(() => {
     bodyEl.innerHTML = "";
     currentSphere = null;
+    chain = { preset: null, originVoiceId: null, originSphere: null, queue: [] };
   }, 350);
 }
 
-btnClose.addEventListener("click", closeSphere);
+btnClose.addEventListener("click", () => {
+  // se siamo in una catena, chiudi tutto senza riaprire
+  closeSphere();
+});
 overlay.addEventListener("click", (e) => {
   if (e.target === overlay) closeSphere();
 });
 
 /* ==========================================================
-   PROGRESS BAR
+   SKIP INTELLIGENTE
+   ========================================================== */
+function shouldSkipStep(step) {
+  if (!step) return false;
+  if (step.skipIf && step.skipIf({ state, chain })) return true;
+  if (step.skipIf2 && step.skipIf2({ state, chain })) return true;
+  return false;
+}
+
+function jumpToFirstValidStep() {
+  const conf = SPHERES[currentSphere];
+  while (currentStep < conf.steps.length && shouldSkipStep(conf.steps[currentStep])) {
+    currentStep++;
+  }
+}
+
+function visibleSteps() {
+  const conf = SPHERES[currentSphere];
+  return conf.steps.filter(s => !shouldSkipStep(s));
+}
+
+/* ==========================================================
+   PROGRESS BAR (mostra solo gli step visibili)
    ========================================================== */
 function buildProgress() {
-  const conf = SPHERES[currentSphere];
   progressEl.innerHTML = "";
-  conf.steps.forEach((_, i) => {
+  const vs = visibleSteps();
+  vs.forEach(() => {
     const s = document.createElement("div");
     s.className = "flow-progress-step";
     progressEl.appendChild(s);
@@ -1023,10 +1088,16 @@ function buildProgress() {
   updateProgress();
 }
 function updateProgress() {
+  const vs = visibleSteps();
+  const conf = SPHERES[currentSphere];
+  const currentStepObj = conf.steps[currentStep];
+  const visibleIdx = vs.findIndex(s => s.id === currentStepObj?.id);
+  // ricostruisce la progress se cambia (skipIf può cambiare in base a state)
+  if (progressEl.children.length !== vs.length) buildProgress();
   [...progressEl.children].forEach((c, i) => {
     c.classList.remove("active", "done");
-    if (i < currentStep) c.classList.add("done");
-    else if (i === currentStep) c.classList.add("active");
+    if (i < visibleIdx) c.classList.add("done");
+    else if (i === visibleIdx) c.classList.add("active");
   });
 }
 
@@ -1034,16 +1105,37 @@ function updateProgress() {
    RENDER STEP
    ========================================================== */
 function renderStep() {
+  // assicurati che il passo corrente non sia da skippare
+  jumpToFirstValidStep();
   const conf = SPHERES[currentSphere];
+  if (currentStep >= conf.steps.length) {
+    // tutto saltato, vai al salvataggio
+    saveVoice();
+    return;
+  }
   const step = conf.steps[currentStep];
   bodyEl.innerHTML = "";
 
   const stepDiv = document.createElement("div");
   stepDiv.className = "flow-step active";
 
+  // Avviso "voce a catena"
+  if (chain.preset && currentStep === firstVisibleIndex()) {
+    const chainNote = document.createElement("div");
+    chainNote.className = "anmy";
+    chainNote.style.background = "linear-gradient(135deg, rgba(255,235,180,0.5), rgba(255,210,160,0.4))";
+    chainNote.style.borderLeftColor = "rgba(180, 140, 60, 0.6)";
+    chainNote.style.marginTop = "0";
+    chainNote.innerHTML = `
+      <div class="anmy-name">filo dal villaggio</div>
+      <div class="anmy-text">Stai aggiungendo una voce collegata. Alcuni campi sono già pre-compilati.</div>
+    `;
+    stepDiv.appendChild(chainNote);
+  }
+
   const q = document.createElement("div");
   q.className = "flow-question";
-  q.textContent = step.question;
+  q.textContent = typeof step.question === "function" ? step.question({ state, chain }) : step.question;
   stepDiv.appendChild(q);
 
   if (step.hint) {
@@ -1053,7 +1145,6 @@ function renderStep() {
     stepDiv.appendChild(h);
   }
 
-  // Render in base al tipo di step
   if (step.kind === "options") renderOptions(stepDiv, step);
   else if (step.kind === "chips") renderChips(stepDiv, step);
   else if (step.kind === "slider") renderSlider(stepDiv, step);
@@ -1062,25 +1153,43 @@ function renderStep() {
   else if (step.kind === "text") renderText(stepDiv, step);
 
   bodyEl.appendChild(stepDiv);
-  // Anmy mirror viene popolato dopo l'inserimento nel DOM
   if (step.kind === "text") updateAnmy();
   updateProgress();
   updateNavButtons();
 
-  // Etichetta del bottone Avanti / Salva
-  const isLast = currentStep === conf.steps.length - 1;
+  const isLast = currentStep === conf.steps.length - 1 || nextValidStep() == null;
   btnNext.textContent = isLast ? "Salva nel Villaggio" : "Avanti";
 }
 
-/* ----- options (incluso optionsBy dipendente da step precedente) ----- */
+function firstVisibleIndex() {
+  const conf = SPHERES[currentSphere];
+  for (let i = 0; i < conf.steps.length; i++) {
+    if (!shouldSkipStep(conf.steps[i])) return i;
+  }
+  return 0;
+}
+
+function nextValidStep() {
+  const conf = SPHERES[currentSphere];
+  let i = currentStep + 1;
+  while (i < conf.steps.length && shouldSkipStep(conf.steps[i])) i++;
+  return i < conf.steps.length ? i : null;
+}
+
+function prevValidStep() {
+  const conf = SPHERES[currentSphere];
+  let i = currentStep - 1;
+  while (i >= 0 && shouldSkipStep(conf.steps[i])) i--;
+  return i >= 0 ? i : null;
+}
+
+/* ----- options ----- */
 function renderOptions(parent, step) {
   const wrap = document.createElement("div");
   wrap.className = "options " + (step.layout || "");
   let opts = step.options;
   if (step.optionsBy) {
-    // Cerca la chiave del passo precedente che fa da discriminatore
-    const dependsOn = state.tipo;
-    opts = step.optionsBy[dependsOn] || [];
+    opts = step.optionsBy[state.tipo] || [];
   }
   opts.forEach(o => {
     const btn = document.createElement("button");
@@ -1095,17 +1204,14 @@ function renderOptions(parent, step) {
     btn.addEventListener("click", () => {
       const wasSelected = state[step.key] === o.value;
       state[step.key] = o.value;
-      // pulisci sfumatura se cambia qualità o tipo
       if (step.key === "qualita" || step.key === "tipo") {
         delete state.sfumatura;
       }
-      // auto-advance per le scelte singole strutturali (no per ricorrenza, che è dentro lo step text)
-      const conf = SPHERES[currentSphere];
-      const isLast = currentStep === conf.steps.length - 1;
-      if (!wasSelected && step.autoAdvance !== false && !isLast) {
+      const nextIdx = nextValidStep();
+      if (!wasSelected && nextIdx != null) {
         setTimeout(() => {
-          if (currentStep < conf.steps.length - 1) {
-            currentStep++;
+          if (currentSphere) {
+            currentStep = nextIdx;
             renderStep();
           }
         }, 220);
@@ -1118,14 +1224,13 @@ function renderOptions(parent, step) {
   parent.appendChild(wrap);
 }
 
-/* ----- chips (sfumature, ambito) ----- */
+/* ----- chips (con multi-select) ----- */
 function renderChips(parent, step) {
   const wrap = document.createElement("div");
   wrap.className = "chips";
   let chips = step.chips;
   if (step.chipsBy) {
-    const key = state.qualita;
-    chips = step.chipsBy[key] || [];
+    chips = step.chipsBy[state.qualita] || [];
   }
   if (!chips.length) {
     const empty = document.createElement("div");
@@ -1139,12 +1244,18 @@ function renderChips(parent, step) {
     btn.className = "chip";
     btn.type = "button";
     btn.textContent = c;
-    const cur = state[step.key] || (step.multi ? [] : null);
-    const isSel = step.multi ? cur.includes(c) : cur === c;
+    const cur = state[step.key];
+    let isSel = false;
+    if (step.multi) {
+      const arr = Array.isArray(cur) ? cur : (cur ? [cur] : []);
+      isSel = arr.includes(c);
+    } else {
+      isSel = cur === c;
+    }
     if (isSel) btn.classList.add("selected");
     btn.addEventListener("click", () => {
       if (step.multi) {
-        const arr = state[step.key] ? [...state[step.key]] : [];
+        const arr = Array.isArray(state[step.key]) ? [...state[step.key]] : (state[step.key] ? [state[step.key]] : []);
         const i = arr.indexOf(c);
         if (i >= 0) arr.splice(i, 1); else arr.push(c);
         state[step.key] = arr;
@@ -1155,10 +1266,17 @@ function renderChips(parent, step) {
     });
     wrap.appendChild(btn);
   });
+  if (step.multi) {
+    const helper = document.createElement("div");
+    helper.className = "flow-hint";
+    helper.style.marginTop = "8px";
+    helper.textContent = "Puoi sceglierne più di una.";
+    parent.appendChild(helper);
+  }
   parent.appendChild(wrap);
 }
 
-/* ----- slider (intensità) ----- */
+/* ----- slider ----- */
 function renderSlider(parent, step) {
   const cur = state[step.key] ?? step.defaultValue ?? Math.round((step.min + step.max) / 2);
   state[step.key] = cur;
@@ -1177,7 +1295,7 @@ function renderSlider(parent, step) {
   });
 }
 
-/* ----- double slider (energia) ----- */
+/* ----- double slider ----- */
 function renderDoubleSlider(parent, step) {
   const cur = state[step.key] || { costo: 3, ritorno: 3 };
   state[step.key] = cur;
@@ -1220,7 +1338,7 @@ function renderBody(parent, step) {
   parent.appendChild(wrap);
 }
 
-/* ----- text + Anmy + ricorrenza ----- */
+/* ----- text + Anmy + ricorrenza + collegamento ----- */
 function renderText(parent, step) {
   const ta = document.createElement("textarea");
   ta.placeholder = "Scrivi liberamente…";
@@ -1241,7 +1359,10 @@ function renderText(parent, step) {
   // Ricorrenza
   const recurDiv = document.createElement("div");
   recurDiv.style.marginTop = "10px";
-  recurDiv.innerHTML = `<div class="flow-question" style="font-size:15px;margin-top:14px;">${step.recurrenceQuestion}</div>`;
+  const recurQ = typeof step.recurrenceQuestion === "function"
+    ? step.recurrenceQuestion({ state, chain })
+    : step.recurrenceQuestion;
+  recurDiv.innerHTML = `<div class="flow-question" style="font-size:15px;margin-top:14px;">${recurQ}</div>`;
   const opts = document.createElement("div");
   opts.className = "options grid-3";
   ["Sì", "No", "Non lo so"].forEach(v => {
@@ -1259,32 +1380,109 @@ function renderText(parent, step) {
   recurDiv.appendChild(opts);
   parent.appendChild(recurDiv);
 
-  // Avviso collegamento obbligatorio
-  if (isLinkRequired(currentSphere, state)) {
-    const link = document.createElement("div");
-    link.className = "anmy";
-    link.style.background = "linear-gradient(135deg, rgba(255,210,180,0.4), rgba(255,180,180,0.3))";
-    link.style.borderLeftColor = "rgba(180, 80, 60, 0.6)";
-    link.innerHTML = `
-      <div class="anmy-name">collegamento da chiudere</div>
-      <div class="anmy-text">${getLinkPrompt(currentSphere, state)}</div>
+  // Avviso collegamento obbligatorio o suggerito
+  const required = getRequiredLink(currentSphere, state);
+  const suggested = !required ? getSuggestedLink(currentSphere, state) : null;
+  const link = required || suggested;
+
+  if (link) {
+    const linkBox = document.createElement("div");
+    linkBox.className = "anmy";
+    if (required) {
+      linkBox.style.background = "linear-gradient(135deg, rgba(255,210,180,0.55), rgba(255,180,180,0.4))";
+      linkBox.style.borderLeftColor = "rgba(180, 80, 60, 0.7)";
+    } else {
+      linkBox.style.background = "linear-gradient(135deg, rgba(200,225,255,0.5), rgba(220,210,255,0.4))";
+      linkBox.style.borderLeftColor = "rgba(80, 110, 180, 0.55)";
+    }
+    linkBox.innerHTML = `
+      <div class="anmy-name">${required ? "filo da chiudere" : "vuoi tessere un filo?"}</div>
+      <div class="anmy-text">${link.reason}</div>
+      <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
+        <button class="btn btn-primary" style="flex:0 0 auto; padding:8px 14px; font-size:13px; border-radius:999px;" id="btnChainNow">
+          Apri ${SPHERES[link.target]?.title || link.target}
+        </button>
+        ${!required ? `<button class="btn btn-secondary" style="flex:0 0 auto; padding:8px 14px; font-size:13px; border-radius:999px;" id="btnChainSkip">Salta</button>` : ""}
+      </div>
     `;
-    parent.appendChild(link);
+    parent.appendChild(linkBox);
+    setTimeout(() => {
+      const b1 = document.getElementById("btnChainNow");
+      const b2 = document.getElementById("btnChainSkip");
+      if (b1) b1.addEventListener("click", () => {
+        // salva la voce corrente, poi apri quella collegata in catena
+        const saved = saveVoice({ silent: true, returnVoice: true });
+        openSphere(link.target, {
+          preset: { ...link.preset },
+          originVoiceId: saved.id,
+          originSphere: currentSphere
+        });
+      });
+      if (b2) b2.addEventListener("click", () => {
+        // marca come "salta": chiudi e nasconde il box per il resto della sessione
+        state._skipSuggested = true;
+        renderStep();
+      });
+    }, 0);
+  }
+
+  // Suggerisci voci esistenti correlate (multi-select se più di una)
+  if (chain.preset && chain.originVoiceId) {
+    // niente: la voce è la catena stessa
+  } else {
+    const related = findRelatedVoices();
+    if (related.length > 0) {
+      const relBox = document.createElement("div");
+      relBox.className = "anmy";
+      relBox.style.background = "linear-gradient(135deg, rgba(220,235,210,0.55), rgba(200,230,220,0.45))";
+      relBox.style.borderLeftColor = "rgba(80, 130, 80, 0.6)";
+      relBox.innerHTML = `
+        <div class="anmy-name">voci già nel villaggio</div>
+        <div class="anmy-text">Vuoi collegare questa voce ad altre già scritte?</div>
+        <div id="relatedList" style="display:flex; flex-direction:column; gap:6px; margin-top:10px;"></div>
+      `;
+      parent.appendChild(relBox);
+      const list = relBox.querySelector("#relatedList");
+      related.forEach(v => {
+        const r = document.createElement("button");
+        r.type = "button";
+        r.className = "chip";
+        r.style.textAlign = "left";
+        r.style.justifyContent = "flex-start";
+        r.style.fontSize = "12px";
+        const sel = (state._linkedVoices || []).includes(v.id);
+        if (sel) r.classList.add("selected");
+        r.innerHTML = `<span style="opacity:0.7; margin-right:6px;">${SPHERES[v.sphere]?.title.toLowerCase()}</span> ${escapeHtml((v.state.testo || "(senza testo)").slice(0, 60))}${(v.state.testo || "").length > 60 ? "…" : ""}`;
+        r.addEventListener("click", () => {
+          const arr = state._linkedVoices ? [...state._linkedVoices] : [];
+          const i = arr.indexOf(v.id);
+          if (i >= 0) arr.splice(i, 1); else arr.push(v.id);
+          state._linkedVoices = arr;
+          renderStep();
+        });
+        list.appendChild(r);
+      });
+    }
   }
 }
 
-function getLinkPrompt(sphere, state) {
-  if (sphere === "azioni" && state.tipo === "frutteto")
-    return "Un frutto si raccoglie sempre per qualcuno. Quando potrai, apri la bolla Contesto e collega questa azione alla persona o al gruppo a cui era diretta.";
-  if (sphere === "contesto" && state.tipo === "persona" && state.qualita === "tensione")
-    return "Una tensione relazionale lascia sempre un'eco emotiva. Quando potrai, apri la bolla Emozioni e nota cosa è scorso nel ruscello.";
-  if (sphere === "contesto" && state.tipo === "persona" && state.qualita === "distanza")
-    return "Una distanza ha sempre una qualità affettiva. Quando potrai, apri la bolla Emozioni e dalle una forma.";
-  if (sphere === "contesto" && state.qualita === "ricorrenza")
-    return "Una sensazione di ricorrenza pesante chiede uno sguardo in più. Apri Emozioni o Pensieri e annota cosa accompagna questo luogo.";
-  return "";
+function findRelatedVoices() {
+  // cerca voci recenti che condividono persona/ambiente/sfumatura/qualita
+  if (!voices.length) return [];
+  const recent = voices.slice(-30).reverse();
+  const matches = recent.filter(v => {
+    if (v.sphere === currentSphere && v.state.qualita === state.qualita) return true;
+    if (state.ancoraggio && v.state.ancoraggio === state.ancoraggio) return true;
+    if (state.innesco === "persona" && v.sphere === "contesto" && v.state.tipo === "persona") return true;
+    if (state.innesco === "luogo" && v.sphere === "contesto" && v.state.tipo === "ambiente") return true;
+    return false;
+  }).slice(0, 5);
+  return matches;
 }
 
+/* ==========================================================
+   ANMY MIRROR
+   ========================================================== */
 function updateAnmy() {
   const block = document.getElementById("anmyBlock");
   if (!block) return;
@@ -1300,38 +1498,47 @@ function updateAnmy() {
 }
 
 function buildMirror() {
-  const conf = SPHERES[currentSphere];
   const parts = [];
-  // Frase principale dipende dalla sfera
+  const sf = formatSfumatura();
   if (currentSphere === "pensieri") {
     const tipo = state.tipo === "arrivato" ? "ti è arrivato" : "hai costruito tu";
     const q = state.qualita ? labelOf("pensieri", "qualita", state.qualita) : null;
     parts.push(`Hai annotato un pensiero che ${tipo}${q ? `, con la forma di una ${q.toLowerCase()}` : ""}.`);
-    if (state.sfumatura) parts.push(`L'hai chiamato ${state.sfumatura}.`);
+    if (sf) parts.push(`L'hai chiamato ${sf}.`);
     if (state.tempo) parts.push(`Si muove ${state.tempo === 'da_un_po' ? "da un po'" : state.tempo}.`);
-    if (state.ambito && state.ambito.length) parts.push(`Riguarda: ${state.ambito.join(", ")}.`);
+    if (Array.isArray(state.ambito) && state.ambito.length) parts.push(`Riguarda: ${state.ambito.join(", ")}.`);
   } else if (currentSphere === "emozioni") {
     const tipo = state.tipo === "onda" ? "un'onda" : "un clima";
     const q = state.qualita ? labelOf("emozioni", "qualita", state.qualita) : null;
     parts.push(`Hai descritto ${tipo}${q ? ` come ${q.toLowerCase()}` : ""}.`);
-    if (state.sfumatura) parts.push(`Le hai dato il nome di ${state.sfumatura.toLowerCase()}.`);
+    if (sf) parts.push(`Le hai dato il nome di ${sf.toLowerCase()}.`);
     if (state.felt_sense) parts.push(`Nel corpo: ${state.felt_sense.toLowerCase()}.`);
     if (state.intensita) parts.push(`Intensità: ${state.intensita} su 5.`);
   } else if (currentSphere === "azioni") {
     const tipo = state.tipo ? `nel ${labelOf("azioni", "tipo", state.tipo)}` : "";
     const q = state.qualita ? labelOf("azioni", "qualita", state.qualita) : null;
     parts.push(`Hai piantato ${q ? `un ${q.toLowerCase()}` : "un'azione"} ${tipo}.`);
-    if (state.sfumatura) parts.push(`L'hai vissuta come "${state.sfumatura.toLowerCase()}".`);
+    if (sf) parts.push(`L'hai vissuta come "${sf.toLowerCase()}".`);
     if (state.energia) parts.push(`Costo ${state.energia.costo}, ritorno ${state.energia.ritorno}.`);
   } else if (currentSphere === "contesto") {
     const tipo = state.tipo === "persona" ? "una persona" : "un ambiente";
     const q = state.qualita ? labelOf("contesto", "qualita", state.qualita) : null;
     parts.push(`Hai annotato ${tipo}${q ? `, qualità ${q}` : ""}.`);
-    if (state.sfumatura) parts.push(`Sfumatura: ${state.sfumatura.toLowerCase()}.`);
+    if (sf) parts.push(`Sfumature: ${sf.toLowerCase()}.`);
     if (state.ancoraggio) parts.push(`Nel villaggio: ${labelOf("contesto", "ancoraggio", state.ancoraggio).toLowerCase()}.`);
+  }
+  if (Array.isArray(state._linkedVoices) && state._linkedVoices.length) {
+    parts.push(`Hai legato ${state._linkedVoices.length} ${state._linkedVoices.length === 1 ? "voce" : "voci"} già nel villaggio.`);
   }
   parts.push(`Le tue parole: «${escapeHtml((state.testo || "").trim()).slice(0, 220)}${(state.testo || "").length > 220 ? "…" : ""}»`);
   return parts.join(" ");
+}
+
+function formatSfumatura() {
+  const v = state.sfumatura;
+  if (!v) return null;
+  if (Array.isArray(v)) return v.length ? v.join(", ") : null;
+  return v;
 }
 
 function labelOf(sphere, key, value) {
@@ -1348,17 +1555,18 @@ function labelOf(sphere, key, value) {
 }
 
 function escapeHtml(s) {
-  return s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  return String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 }
 
 /* ==========================================================
    NAVIGAZIONE
    ========================================================== */
 btnBack.addEventListener("click", () => {
-  if (currentStep === 0) {
+  const prev = prevValidStep();
+  if (prev == null) {
     closeSphere();
   } else {
-    currentStep--;
+    currentStep = prev;
     renderStep();
   }
 });
@@ -1367,8 +1575,9 @@ btnNext.addEventListener("click", () => {
   const conf = SPHERES[currentSphere];
   const step = conf.steps[currentStep];
   if (!isStepValid(step)) return;
-  if (currentStep < conf.steps.length - 1) {
-    currentStep++;
+  const next = nextValidStep();
+  if (next != null) {
+    currentStep = next;
     renderStep();
   } else {
     saveVoice();
@@ -1391,26 +1600,37 @@ function updateNavButtons() {
   const conf = SPHERES[currentSphere];
   const step = conf.steps[currentStep];
   btnNext.disabled = !isStepValid(step);
-  btnBack.textContent = currentStep === 0 ? "Chiudi" : "Indietro";
+  btnBack.textContent = prevValidStep() == null ? "Chiudi" : "Indietro";
 }
 
 /* ==========================================================
-   SALVATAGGIO (locale, in memoria)
+   SALVATAGGIO + CATENA
    ========================================================== */
-const voices = JSON.parse(localStorage.getItem("risonanza_voices") || "[]");
-
-function saveVoice() {
+function saveVoice(opts = {}) {
   const voice = {
-    id: Date.now(),
+    id: Date.now() + "_" + Math.random().toString(36).slice(2, 7),
     sphere: currentSphere,
     state: { ...state },
+    links: Array.isArray(state._linkedVoices) ? [...state._linkedVoices] : [],
+    chainOrigin: chain.originVoiceId || null,
     createdAt: new Date().toISOString()
   };
+  // se c'è un'origine, aggiungi il link inverso
+  if (chain.originVoiceId) {
+    const origin = voices.find(v => v.id === chain.originVoiceId);
+    if (origin) {
+      origin.links = origin.links || [];
+      if (!origin.links.includes(voice.id)) origin.links.push(voice.id);
+    }
+    voice.links.push(chain.originVoiceId);
+  }
   voices.push(voice);
   try { localStorage.setItem("risonanza_voices", JSON.stringify(voices)); } catch (e) {}
-  voiceCount = voices.length;
-  showToast("Voce salvata nel Villaggio");
-  closeSphere();
+  if (!opts.silent) {
+    showToast(chain.originVoiceId ? "Filo intrecciato nel Villaggio" : "Voce salvata nel Villaggio");
+    closeSphere();
+  }
+  if (opts.returnVoice) return voice;
 }
 
 function showToast(msg) {
