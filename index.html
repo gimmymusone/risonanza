@@ -161,6 +161,374 @@
     font-size: 10px; letter-spacing: 0.25em;
     text-transform: uppercase; z-index: 10;
   }
+
+  /* ==========================================================
+     OVERLAY del flusso — appare in fondo, non copre lo sfondo
+     ========================================================== */
+  .flow-overlay {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 100;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  .flow-overlay.active { opacity: 1; pointer-events: auto; }
+
+  .flow-overlay::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top,
+      rgba(20, 30, 50, 0.55) 0%,
+      rgba(20, 30, 50, 0.25) 35%,
+      rgba(20, 30, 50, 0) 65%);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+  }
+  .flow-overlay.active::before { pointer-events: auto; opacity: 1; }
+
+  .flow-card {
+    position: relative;
+    width: min(560px, 92vw);
+    max-height: 78vh;
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+    border-radius: 28px 28px 18px 18px;
+    box-shadow:
+      0 -10px 40px rgba(20,40,70,0.18),
+      0 -2px 8px rgba(20,40,70,0.08),
+      inset 0 1px 0 rgba(255,255,255,0.8);
+    margin-bottom: 14px;
+    overflow: hidden;
+    transform: translateY(40px);
+    transition: transform 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+    display: flex;
+    flex-direction: column;
+  }
+  .flow-overlay.active .flow-card { transform: translateY(0); }
+
+  .flow-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px 8px;
+    border-bottom: 1px solid rgba(60, 80, 110, 0.08);
+  }
+  .flow-title {
+    font-size: 16px;
+    color: #2A3850;
+    letter-spacing: 0.04em;
+    font-weight: 500;
+  }
+  .flow-subtitle {
+    font-size: 11px;
+    color: rgba(60, 80, 110, 0.6);
+    font-style: italic;
+    letter-spacing: 0.08em;
+    text-transform: lowercase;
+  }
+  .flow-close {
+    width: 32px; height: 32px;
+    border: none;
+    background: rgba(60, 80, 110, 0.08);
+    border-radius: 50%;
+    color: #2A3850;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+  }
+  .flow-close:hover { background: rgba(60, 80, 110, 0.16); }
+
+  .flow-progress {
+    display: flex;
+    gap: 6px;
+    padding: 10px 18px;
+  }
+  .flow-progress-step {
+    flex: 1;
+    height: 3px;
+    background: rgba(60, 80, 110, 0.12);
+    border-radius: 2px;
+    transition: background 0.3s;
+  }
+  .flow-progress-step.active { background: #2A3850; }
+  .flow-progress-step.done { background: rgba(42, 56, 80, 0.55); }
+
+  .flow-body {
+    padding: 8px 22px 22px;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .flow-step { display: none; animation: fadeStep 0.3s ease; }
+  .flow-step.active { display: block; }
+  @keyframes fadeStep {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .flow-question {
+    font-size: 17px;
+    color: #2A3850;
+    margin: 6px 0 4px;
+    line-height: 1.4;
+  }
+  .flow-hint {
+    font-size: 12px;
+    color: rgba(60, 80, 110, 0.65);
+    font-style: italic;
+    margin-bottom: 16px;
+    letter-spacing: 0.02em;
+  }
+
+  /* Opzioni a card */
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .options.grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+  .options.grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .option {
+    background: rgba(255,255,255,0.6);
+    border: 1.5px solid rgba(60, 80, 110, 0.12);
+    border-radius: 16px;
+    padding: 12px 14px;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+    font-family: inherit;
+    color: #2A3850;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+  .option:hover {
+    background: rgba(255,255,255,0.85);
+    border-color: rgba(60, 80, 110, 0.3);
+    transform: translateY(-1px);
+  }
+  .option.selected {
+    background: rgba(42, 56, 80, 0.92);
+    border-color: #2A3850;
+    color: #FFFFFF;
+  }
+  .option-icon {
+    font-size: 22px;
+    line-height: 1;
+  }
+  .option-label {
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+  }
+  .option-desc {
+    font-size: 11px;
+    opacity: 0.7;
+    font-style: italic;
+    line-height: 1.3;
+  }
+  .options.grid-3 .option {
+    align-items: center;
+    text-align: center;
+    padding: 14px 6px;
+  }
+  .options.grid-3 .option .option-label {
+    font-size: 12px;
+  }
+
+  /* Chip per sfumature */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .chip {
+    background: rgba(255,255,255,0.6);
+    border: 1.5px solid rgba(60, 80, 110, 0.12);
+    border-radius: 999px;
+    padding: 8px 14px;
+    cursor: pointer;
+    font-family: inherit;
+    color: #2A3850;
+    font-size: 13px;
+    transition: all 0.2s;
+  }
+  .chip:hover {
+    background: rgba(255,255,255,0.85);
+    border-color: rgba(60, 80, 110, 0.3);
+  }
+  .chip.selected {
+    background: rgba(42, 56, 80, 0.92);
+    border-color: #2A3850;
+    color: #FFFFFF;
+  }
+
+  /* Slider intensità */
+  .slider-row {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 10px;
+  }
+  .slider-label {
+    font-size: 13px;
+    color: #2A3850;
+    display: flex;
+    justify-content: space-between;
+  }
+  .slider-label span:last-child {
+    font-weight: 600;
+    color: rgba(60, 80, 110, 0.85);
+  }
+  input[type="range"] {
+    width: 100%;
+    accent-color: #2A3850;
+  }
+
+  /* Silhouette corpo */
+  .body-zones {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin-top: 8px;
+  }
+  .body-zone {
+    background: rgba(255,255,255,0.6);
+    border: 1.5px solid rgba(60, 80, 110, 0.12);
+    border-radius: 12px;
+    padding: 8px 4px;
+    cursor: pointer;
+    text-align: center;
+    font-size: 11px;
+    color: #2A3850;
+    font-family: inherit;
+    transition: all 0.2s;
+  }
+  .body-zone:hover { background: rgba(255,255,255,0.85); }
+  .body-zone.selected { background: rgba(42, 56, 80, 0.92); color: #FFFFFF; border-color: #2A3850; }
+
+  /* Textarea */
+  textarea {
+    width: 100%;
+    min-height: 120px;
+    background: rgba(255,255,255,0.7);
+    border: 1.5px solid rgba(60, 80, 110, 0.15);
+    border-radius: 14px;
+    padding: 12px 14px;
+    font-family: inherit;
+    font-size: 14px;
+    color: #2A3850;
+    resize: vertical;
+    line-height: 1.5;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  textarea:focus { border-color: rgba(42, 56, 80, 0.5); }
+
+  /* Anmy mirror block */
+  .anmy {
+    background: linear-gradient(135deg, rgba(184, 212, 232, 0.55), rgba(220, 200, 255, 0.45));
+    border-radius: 16px;
+    padding: 14px 16px;
+    margin: 14px 0;
+    border-left: 3px solid rgba(42, 56, 80, 0.5);
+    min-height: 64px;
+  }
+  .anmy-name {
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgba(42, 56, 80, 0.75);
+    margin-bottom: 6px;
+    font-weight: 600;
+  }
+  .anmy-text {
+    font-size: 14px;
+    color: #2A3850;
+    line-height: 1.5;
+    font-style: italic;
+  }
+
+  /* Footer azioni */
+  .flow-footer {
+    display: flex;
+    gap: 10px;
+    padding: 14px 18px;
+    border-top: 1px solid rgba(60, 80, 110, 0.08);
+    background: rgba(255,255,255,0.4);
+  }
+  .btn {
+    flex: 1;
+    padding: 12px 18px;
+    border-radius: 14px;
+    border: none;
+    font-family: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: 0.03em;
+  }
+  .btn-secondary {
+    background: rgba(60, 80, 110, 0.1);
+    color: #2A3850;
+  }
+  .btn-secondary:hover { background: rgba(60, 80, 110, 0.18); }
+  .btn-primary {
+    background: #2A3850;
+    color: #FFFFFF;
+  }
+  .btn-primary:hover { background: #1a2840; }
+  .btn-primary:disabled {
+    background: rgba(60, 80, 110, 0.25);
+    cursor: not-allowed;
+  }
+
+  /* Toast di conferma salvataggio */
+  .toast {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-80px);
+    background: rgba(42, 56, 80, 0.95);
+    color: #FFFFFF;
+    padding: 12px 22px;
+    border-radius: 999px;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    z-index: 200;
+    box-shadow: 0 8px 28px rgba(20,40,70,0.3);
+    transition: transform 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2);
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Bolla evidenziata quando hai una voce in apertura */
+  .bubble.glow-pulse .bubble-sphere {
+    animation: breathe ease-in-out infinite, pulseRing 2s ease-in-out infinite;
+  }
+  @keyframes pulseRing {
+    0%, 100% { box-shadow: inset 0 0 0 1.5px rgba(255,255,255,0.6), inset 0 0 20px rgba(255,255,255,0.2), inset 4px -4px 20px rgba(180,210,240,0.3), 0 0 0 0 rgba(255,255,255,0.4); }
+    50% { box-shadow: inset 0 0 0 1.5px rgba(255,255,255,0.6), inset 0 0 20px rgba(255,255,255,0.2), inset 4px -4px 20px rgba(180,210,240,0.3), 0 0 0 14px rgba(255,255,255,0); }
+  }
 </style>
 </head>
 <body>
@@ -194,7 +562,7 @@
   <div class="window-glow" style="left: 27%; top: 50%; width: 10px; height: 12px; animation-delay: 1.5s;"></div>
 
   <!-- PENSIERI — centro alto (cielo) -->
-  <div class="bubble" style="left: 50%; top: 20%;">
+  <div class="bubble" data-sphere="pensieri" style="left: 50%; top: 20%;">
     <div class="bubble-sphere" style="animation-duration: 5s;"></div>
     <div class="bubble-highlight"></div>
     <div class="bubble-highlight-small"></div>
@@ -205,7 +573,7 @@
   </div>
 
   <!-- CONTESTO — sinistra (villaggio) -->
-  <div class="bubble" style="left: 15%; top: 52%;">
+  <div class="bubble" data-sphere="contesto" style="left: 15%; top: 52%;">
     <div class="bubble-sphere" style="animation-duration: 6.2s; animation-delay: 0.8s;"></div>
     <div class="bubble-highlight"></div>
     <div class="bubble-highlight-small"></div>
@@ -216,7 +584,7 @@
   </div>
 
   <!-- EMOZIONI — destra (ruscello) -->
-  <div class="bubble" style="left: 85%; top: 52%;">
+  <div class="bubble" data-sphere="emozioni" style="left: 85%; top: 52%;">
     <div class="bubble-sphere" style="animation-duration: 5.6s; animation-delay: 1.5s;"></div>
     <div class="bubble-highlight"></div>
     <div class="bubble-highlight-small"></div>
@@ -226,17 +594,830 @@
     </div>
   </div>
 
-  <!-- AZIONI — centro basso (bosco) -->
-  <div class="bubble" style="left: 50%; top: 82%;">
+  <!-- AZIONI — centro basso (foresta) -->
+  <div class="bubble" data-sphere="azioni" style="left: 50%; top: 82%;">
     <div class="bubble-sphere" style="animation-duration: 6.6s; animation-delay: 2.2s;"></div>
     <div class="bubble-highlight"></div>
     <div class="bubble-highlight-small"></div>
     <div class="bubble-text">
       <div class="bubble-name">Azioni</div>
-      <div class="bubble-meta">il bosco</div>
+      <div class="bubble-meta">la foresta</div>
     </div>
   </div>
 
   <div class="label">risonanza</div>
+
+  <!-- ==========================================================
+       OVERLAY DEL FLUSSO — sale dal basso, lascia il villaggio visibile
+       ========================================================== -->
+  <div class="flow-overlay" id="flowOverlay">
+    <div class="flow-card">
+      <div class="flow-header">
+        <div>
+          <div class="flow-title" id="flowTitle">—</div>
+          <div class="flow-subtitle" id="flowSubtitle">—</div>
+        </div>
+        <button class="flow-close" id="flowClose" aria-label="Chiudi">×</button>
+      </div>
+      <div class="flow-progress" id="flowProgress"></div>
+      <div class="flow-body" id="flowBody"></div>
+      <div class="flow-footer">
+        <button class="btn btn-secondary" id="btnBack">Indietro</button>
+        <button class="btn btn-primary" id="btnNext" disabled>Avanti</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="toast" id="toast">Voce salvata nel Villaggio</div>
+
+<script>
+/* ==========================================================
+   RISONANZA — Logica delle Sfere v2
+   Pattern unificato: A) Tipo → B) Qualità + Sfumatura → C) Ancoraggio → D) Testo + Anmy + Ricorrenza
+   ========================================================== */
+
+const SPHERES = {
+  pensieri: {
+    title: "Pensieri",
+    subtitle: "il cielo",
+    steps: [
+      // A. Tipo
+      {
+        kind: "options",
+        key: "tipo",
+        question: "Come è arrivato questo pensiero?",
+        hint: "Nota la genesi: sei stato attraversato o l'hai costruito tu?",
+        layout: "grid-2",
+        options: [
+          { value: "arrivato", icon: "✨", label: "Mi è arrivato", desc: "è apparso da solo" },
+          { value: "creato",   icon: "🪶", label: "L'ho creato",  desc: "l'ho costruito io" }
+        ]
+      },
+      // B1. Qualità ternaria
+      {
+        kind: "options",
+        key: "qualita",
+        question: "Che forma ha nel cielo?",
+        hint: "Una sola scelta. Va bene anche solo a sensazione.",
+        layout: "grid-3",
+        options: [
+          { value: "luce",   icon: "☀️", label: "Luce" },
+          { value: "nuvola", icon: "☁️", label: "Nuvola" },
+          { value: "vento",  icon: "💨", label: "Vento" }
+        ]
+      },
+      // B2. Sfumatura — dipende da qualità
+      {
+        kind: "chips",
+        key: "sfumatura",
+        question: "Quale sfumatura ti somiglia di più?",
+        hint: "Se nessuna è giusta, salta pure.",
+        optional: true,
+        chipsBy: {
+          luce:   ["Intuizione", "Idea che sblocca", "Comprensione", "Ricordo che scalda"],
+          nuvola: ["Rimuginio", "Dubbio che pesa", "Pensiero che torna", "Confusione"],
+          vento:  ["Pensiero veloce", "Distrazione", "Flusso di idee", "Slancio creativo"]
+        }
+      },
+      // C. Ancoraggio — Tempo
+      {
+        kind: "options",
+        key: "tempo",
+        question: "Quando si sta muovendo?",
+        layout: "grid-3",
+        options: [
+          { value: "ora",      icon: "⏱", label: "Ora" },
+          { value: "oggi",     icon: "🌅", label: "Oggi" },
+          { value: "da_un_po", icon: "🌀", label: "Da un po'" }
+        ]
+      },
+      // C. Ancoraggio — Ambito
+      {
+        kind: "chips",
+        key: "ambito",
+        question: "In che ambito vive?",
+        hint: "Anche più di uno, se ti aiuta.",
+        multi: true,
+        chips: ["Lavoro / Studio", "Relazioni", "Sé", "Senso / Futuro", "Corpo", "Mondo"]
+      },
+      // D. Testo + Anmy + Ricorrenza
+      {
+        kind: "text",
+        key: "testo",
+        question: "Scrivilo come ti viene.",
+        hint: "Anmy specchierà solo ciò che hai scritto, niente interpretazioni.",
+        anmyMirror: true,
+        recurrenceQuestion: "È un pensiero che torna?"
+      }
+    ]
+  },
+
+  emozioni: {
+    title: "Emozioni",
+    subtitle: "il ruscello",
+    steps: [
+      {
+        kind: "options",
+        key: "tipo",
+        question: "Come è entrata nel ruscello?",
+        hint: "Un'onda episodica o un clima diffuso?",
+        layout: "grid-2",
+        options: [
+          { value: "onda",   icon: "🌬", label: "Un'onda",  desc: "passata in un momento preciso" },
+          { value: "clima",  icon: "🌫", label: "Un clima", desc: "stato di sottofondo" }
+        ]
+      },
+      {
+        kind: "options",
+        key: "qualita",
+        question: "Che forma sta prendendo l'acqua?",
+        layout: "grid-3",
+        options: [
+          { value: "sorgente", icon: "💧", label: "Sorgente" },
+          { value: "corrente", icon: "🌊", label: "Corrente" },
+          { value: "vortice",  icon: "🌀", label: "Vortice" }
+        ]
+      },
+      {
+        kind: "chips",
+        key: "sfumatura",
+        question: "Quale parola si avvicina di più?",
+        hint: "Se non c'è, salta.",
+        optional: true,
+        chipsBy: {
+          sorgente: ["Gioia", "Tenerezza", "Curiosità", "Gratitudine"],
+          corrente: ["Rabbia", "Desiderio", "Entusiasmo", "Paura"],
+          vortice:  ["Ansia", "Tristezza", "Vergogna", "Disagio diffuso"]
+        }
+      },
+      {
+        kind: "options",
+        key: "innesco",
+        question: "A cosa la colleghi?",
+        hint: "Sceglierne una apre un possibile filo verso un'altra bolla.",
+        layout: "grid-2",
+        options: [
+          { value: "persona",  icon: "👤", label: "Una persona", desc: "→ Contesto" },
+          { value: "luogo",    icon: "📍", label: "Un luogo / situazione", desc: "→ Contesto" },
+          { value: "pensiero", icon: "💭", label: "Un pensiero", desc: "→ Cielo" },
+          { value: "azione",   icon: "🎬", label: "Qualcosa che ho fatto", desc: "→ Foresta" },
+          { value: "corpo",    icon: "🌫", label: "Niente di preciso", desc: "il corpo, l'aria" }
+        ]
+      },
+      {
+        kind: "body",
+        key: "felt_sense",
+        question: "Dove la senti nel corpo?",
+        hint: "Anche 'non la trovo' è una risposta giusta.",
+        optional: true
+      },
+      {
+        kind: "slider",
+        key: "intensita",
+        question: "Quanto occupa spazio adesso?",
+        hint: "Non quanto è 'forte' — quanto è presente.",
+        min: 1, max: 5, defaultValue: 3
+      },
+      {
+        kind: "text",
+        key: "testo",
+        question: "Raccontala.",
+        anmyMirror: true,
+        recurrenceQuestion: "Questa forma l'hai già vista scorrere?"
+      }
+    ]
+  },
+
+  azioni: {
+    title: "Azioni",
+    subtitle: "la foresta",
+    steps: [
+      {
+        kind: "options",
+        key: "tipo",
+        question: "Dove è cresciuta nella foresta?",
+        hint: "Per te, per altri, o da sola?",
+        layout: "grid-2",
+        options: [
+          { value: "bosco",    icon: "🌲", label: "Bosco",    desc: "azione di cura per sé" },
+          { value: "frutteto", icon: "🍎", label: "Frutteto", desc: "azione data al mondo / agli altri" },
+          { value: "selvatiche", icon: "🌿", label: "Piante Selvatiche", desc: "abitudine, pattern, automatismo" }
+        ]
+      },
+      {
+        kind: "options",
+        key: "qualita",
+        question: "Che pianta è?",
+        layout: "grid-3",
+        options: [
+          { value: "seme",   icon: "🌱", label: "Seme" },
+          { value: "albero", icon: "🌳", label: "Albero" },
+          { value: "edera",  icon: "🍃", label: "Edera" }
+        ]
+      },
+      {
+        kind: "chips",
+        key: "sfumatura",
+        question: "Quale sfumatura coglie meglio?",
+        optional: true,
+        chipsBy: {
+          seme:   ["Primo passo", "Tentativo", "Voglia di provare", "Fuori dal solito"],
+          albero: ["Costanza", "Routine che nutre", "Impegno mantenuto", "Passione coltivata"],
+          edera:  ["Ho ceduto al solito", "Pilota automatico", "Mi distraggo", "Mi rifugio"]
+        }
+      },
+      {
+        kind: "double-slider",
+        key: "energia",
+        question: "Quanta energia ha chiesto, quanta ne ha restituita?",
+        hint: "Lettura soggettiva, non un voto.",
+        labels: ["Costo", "Ritorno"],
+        min: 1, max: 5
+      },
+      {
+        // Collegamento: obbligatorio se Frutteto, suggerito altrove
+        kind: "options",
+        key: "collegamento",
+        question: "L'hai fatta in connessione con cosa?",
+        hint: "Per il Frutteto serve indicare un destinatario.",
+        layout: "grid-2",
+        options: [
+          { value: "persona",  icon: "👤", label: "Per/con una persona", desc: "→ Contesto" },
+          { value: "luogo",    icon: "📍", label: "In un luogo / ambiente", desc: "→ Contesto" },
+          { value: "emozione", icon: "💧", label: "Innescata da un'emozione", desc: "→ Ruscello" },
+          { value: "pensiero", icon: "💭", label: "Innescata da un pensiero", desc: "→ Cielo" },
+          { value: "solo_me",  icon: "🌟", label: "Per me e basta", desc: "" }
+        ]
+      },
+      {
+        kind: "text",
+        key: "testo",
+        question: "Racconta com'è andata.",
+        anmyMirror: true,
+        recurrenceQuestion: "Questa pianta è già cresciuta altre volte?"
+      }
+    ]
+  },
+
+  contesto: {
+    title: "Contesto",
+    subtitle: "il villaggio",
+    steps: [
+      {
+        kind: "options",
+        key: "tipo",
+        question: "Di cosa parliamo?",
+        layout: "grid-2",
+        options: [
+          { value: "persona",  icon: "👤", label: "Una persona" },
+          { value: "ambiente", icon: "🏞", label: "Un ambiente" }
+        ]
+      },
+      {
+        // Qualità diversa a seconda del tipo
+        kind: "options",
+        key: "qualita",
+        question: "Che qualità ha avuto?",
+        layout: "grid-3",
+        optionsBy: {
+          persona: [
+            { value: "sintonia", icon: "🌞", label: "Sintonia" },
+            { value: "tensione", icon: "⚡", label: "Tensione" },
+            { value: "distanza", icon: "🌫", label: "Distanza" }
+          ],
+          ambiente: [
+            { value: "episodio",   icon: "📍", label: "Episodio" },
+            { value: "evoluzione", icon: "🌱", label: "Evoluzione" },
+            { value: "ricorrenza", icon: "🔁", label: "Ricorrenza" }
+          ]
+        }
+      },
+      {
+        kind: "chips",
+        key: "sfumatura",
+        question: "Quale sfumatura risuona?",
+        hint: "Direttamente dalla mappa con Andrea.",
+        optional: true,
+        chipsBy: {
+          sintonia:   ["Momento che risuona", "Dialogo stimolante", "Senso di vicinanza", "Nuovo incontro"],
+          tensione:   ["Senso di disallineamento", "Senso di freddezza", "Difficoltà a comunicare", "Senso di annullamento"],
+          distanza:   ["Desiderio di vicinanza", "Nostalgia", "Senso di isolamento", "Bisogno di lontananza"],
+          episodio:   ["Tutto scorreva", "Piccolo imprevisto", "Meta raggiunta", "Esperienza insolita"],
+          evoluzione: ["Cambiamento imminente", "Fase di adattamento", "Voglia di esplorare"],
+          ricorrenza: ["Dinamica che si ripete", "Abitudini sane", "Mi sento in gabbia"]
+        }
+      },
+      {
+        // Ancoraggio — dipende dal tipo
+        kind: "options",
+        key: "ancoraggio",
+        question: "Dove la collochi nel villaggio?",
+        layout: "grid-2",
+        optionsBy: {
+          persona: [
+            { value: "me_stesso",     icon: "🧍", label: "Me stesso" },
+            { value: "avatar_citta",  icon: "🏙", label: "Avatar in città" },
+            { value: "gruppo",        icon: "👥", label: "Gruppo" },
+            { value: "nuova_persona", icon: "➕", label: "Nuova persona" }
+          ],
+          ambiente: [
+            { value: "lavoro_studio", icon: "💼", label: "Lavoro & Studio" },
+            { value: "sport_hobby",   icon: "🎾", label: "Sport & Hobby" },
+            { value: "socialita",     icon: "🍷", label: "Socialità" },
+            { value: "cultura_relax", icon: "🎭", label: "Cultura & Relax" },
+            { value: "in_movimento",  icon: "🚶", label: "In Movimento" },
+            { value: "servizi",       icon: "🛎", label: "Servizi" },
+            { value: "spazi_privati", icon: "🏠", label: "Spazi Privati" },
+            { value: "nuovo_ambiente",icon: "➕", label: "Nuovo Ambiente" }
+          ]
+        }
+      },
+      {
+        kind: "text",
+        key: "testo",
+        question: "Aggiungi le tue parole.",
+        anmyMirror: true,
+        recurrenceQuestion: "Questo torna spesso nel tuo Villaggio?"
+      }
+    ]
+  }
+};
+
+/* ==========================================================
+   Logica dei collegamenti obbligatori (dal documento §6.1)
+   ========================================================== */
+function isLinkRequired(sphere, state) {
+  // Frutteto → serve un destinatario (persona o luogo)
+  if (sphere === "azioni" && state.tipo === "frutteto") return true;
+  // Contesto · Persona · Tensione/Distanza → serve almeno una sfumatura emotiva accennata
+  if (sphere === "contesto" && state.tipo === "persona" && (state.qualita === "tensione" || state.qualita === "distanza")) return true;
+  // Contesto · Ambiente · Ricorrenza "Mi sento in gabbia"
+  if (sphere === "contesto" && state.qualita === "ricorrenza" && state.sfumatura && state.sfumatura.includes("Mi sento in gabbia")) return true;
+  return false;
+}
+
+/* ==========================================================
+   STATE
+   ========================================================== */
+let currentSphere = null;
+let currentStep = 0;
+let state = {};
+let voiceCount = 0;
+
+/* ==========================================================
+   DOM
+   ========================================================== */
+const overlay = document.getElementById("flowOverlay");
+const titleEl = document.getElementById("flowTitle");
+const subtitleEl = document.getElementById("flowSubtitle");
+const progressEl = document.getElementById("flowProgress");
+const bodyEl = document.getElementById("flowBody");
+const btnBack = document.getElementById("btnBack");
+const btnNext = document.getElementById("btnNext");
+const btnClose = document.getElementById("flowClose");
+const toastEl = document.getElementById("toast");
+
+/* ==========================================================
+   APRI / CHIUDI FLUSSO
+   ========================================================== */
+document.querySelectorAll(".bubble").forEach(el => {
+  el.addEventListener("click", () => openSphere(el.dataset.sphere));
+});
+
+function openSphere(sphereKey) {
+  currentSphere = sphereKey;
+  currentStep = 0;
+  state = {};
+  const conf = SPHERES[sphereKey];
+  titleEl.textContent = conf.title;
+  subtitleEl.textContent = conf.subtitle;
+  buildProgress();
+  renderStep();
+  overlay.classList.add("active");
+}
+
+function closeSphere() {
+  overlay.classList.remove("active");
+  setTimeout(() => {
+    bodyEl.innerHTML = "";
+    currentSphere = null;
+  }, 350);
+}
+
+btnClose.addEventListener("click", closeSphere);
+overlay.addEventListener("click", (e) => {
+  if (e.target === overlay) closeSphere();
+});
+
+/* ==========================================================
+   PROGRESS BAR
+   ========================================================== */
+function buildProgress() {
+  const conf = SPHERES[currentSphere];
+  progressEl.innerHTML = "";
+  conf.steps.forEach((_, i) => {
+    const s = document.createElement("div");
+    s.className = "flow-progress-step";
+    progressEl.appendChild(s);
+  });
+  updateProgress();
+}
+function updateProgress() {
+  [...progressEl.children].forEach((c, i) => {
+    c.classList.remove("active", "done");
+    if (i < currentStep) c.classList.add("done");
+    else if (i === currentStep) c.classList.add("active");
+  });
+}
+
+/* ==========================================================
+   RENDER STEP
+   ========================================================== */
+function renderStep() {
+  const conf = SPHERES[currentSphere];
+  const step = conf.steps[currentStep];
+  bodyEl.innerHTML = "";
+
+  const stepDiv = document.createElement("div");
+  stepDiv.className = "flow-step active";
+
+  const q = document.createElement("div");
+  q.className = "flow-question";
+  q.textContent = step.question;
+  stepDiv.appendChild(q);
+
+  if (step.hint) {
+    const h = document.createElement("div");
+    h.className = "flow-hint";
+    h.textContent = step.hint;
+    stepDiv.appendChild(h);
+  }
+
+  // Render in base al tipo di step
+  if (step.kind === "options") renderOptions(stepDiv, step);
+  else if (step.kind === "chips") renderChips(stepDiv, step);
+  else if (step.kind === "slider") renderSlider(stepDiv, step);
+  else if (step.kind === "double-slider") renderDoubleSlider(stepDiv, step);
+  else if (step.kind === "body") renderBody(stepDiv, step);
+  else if (step.kind === "text") renderText(stepDiv, step);
+
+  bodyEl.appendChild(stepDiv);
+  // Anmy mirror viene popolato dopo l'inserimento nel DOM
+  if (step.kind === "text") updateAnmy();
+  updateProgress();
+  updateNavButtons();
+
+  // Etichetta del bottone Avanti / Salva
+  const isLast = currentStep === conf.steps.length - 1;
+  btnNext.textContent = isLast ? "Salva nel Villaggio" : "Avanti";
+}
+
+/* ----- options (incluso optionsBy dipendente da step precedente) ----- */
+function renderOptions(parent, step) {
+  const wrap = document.createElement("div");
+  wrap.className = "options " + (step.layout || "");
+  let opts = step.options;
+  if (step.optionsBy) {
+    // Cerca la chiave del passo precedente che fa da discriminatore
+    const dependsOn = state.tipo;
+    opts = step.optionsBy[dependsOn] || [];
+  }
+  opts.forEach(o => {
+    const btn = document.createElement("button");
+    btn.className = "option";
+    btn.type = "button";
+    if (state[step.key] === o.value) btn.classList.add("selected");
+    btn.innerHTML = `
+      ${o.icon ? `<span class="option-icon">${o.icon}</span>` : ""}
+      <span class="option-label">${o.label}</span>
+      ${o.desc ? `<span class="option-desc">${o.desc}</span>` : ""}
+    `;
+    btn.addEventListener("click", () => {
+      const wasSelected = state[step.key] === o.value;
+      state[step.key] = o.value;
+      // pulisci sfumatura se cambia qualità o tipo
+      if (step.key === "qualita" || step.key === "tipo") {
+        delete state.sfumatura;
+      }
+      // auto-advance per le scelte singole strutturali (no per ricorrenza, che è dentro lo step text)
+      const conf = SPHERES[currentSphere];
+      const isLast = currentStep === conf.steps.length - 1;
+      if (!wasSelected && step.autoAdvance !== false && !isLast) {
+        setTimeout(() => {
+          if (currentStep < conf.steps.length - 1) {
+            currentStep++;
+            renderStep();
+          }
+        }, 220);
+      } else {
+        renderStep();
+      }
+    });
+    wrap.appendChild(btn);
+  });
+  parent.appendChild(wrap);
+}
+
+/* ----- chips (sfumature, ambito) ----- */
+function renderChips(parent, step) {
+  const wrap = document.createElement("div");
+  wrap.className = "chips";
+  let chips = step.chips;
+  if (step.chipsBy) {
+    const key = state.qualita;
+    chips = step.chipsBy[key] || [];
+  }
+  if (!chips.length) {
+    const empty = document.createElement("div");
+    empty.className = "flow-hint";
+    empty.textContent = "Salta pure questo passaggio.";
+    parent.appendChild(empty);
+    return;
+  }
+  chips.forEach(c => {
+    const btn = document.createElement("button");
+    btn.className = "chip";
+    btn.type = "button";
+    btn.textContent = c;
+    const cur = state[step.key] || (step.multi ? [] : null);
+    const isSel = step.multi ? cur.includes(c) : cur === c;
+    if (isSel) btn.classList.add("selected");
+    btn.addEventListener("click", () => {
+      if (step.multi) {
+        const arr = state[step.key] ? [...state[step.key]] : [];
+        const i = arr.indexOf(c);
+        if (i >= 0) arr.splice(i, 1); else arr.push(c);
+        state[step.key] = arr;
+      } else {
+        state[step.key] = state[step.key] === c ? null : c;
+      }
+      renderStep();
+    });
+    wrap.appendChild(btn);
+  });
+  parent.appendChild(wrap);
+}
+
+/* ----- slider (intensità) ----- */
+function renderSlider(parent, step) {
+  const cur = state[step.key] ?? step.defaultValue ?? Math.round((step.min + step.max) / 2);
+  state[step.key] = cur;
+  const row = document.createElement("div");
+  row.className = "slider-row";
+  row.innerHTML = `
+    <div class="slider-label"><span>${step.min}</span><span id="slVal">${cur}</span><span>${step.max}</span></div>
+    <input type="range" min="${step.min}" max="${step.max}" value="${cur}" id="slInput">
+  `;
+  parent.appendChild(row);
+  const input = row.querySelector("#slInput");
+  const val = row.querySelector("#slVal");
+  input.addEventListener("input", () => {
+    state[step.key] = +input.value;
+    val.textContent = input.value;
+  });
+}
+
+/* ----- double slider (energia) ----- */
+function renderDoubleSlider(parent, step) {
+  const cur = state[step.key] || { costo: 3, ritorno: 3 };
+  state[step.key] = cur;
+  step.labels.forEach((label, i) => {
+    const k = i === 0 ? "costo" : "ritorno";
+    const row = document.createElement("div");
+    row.className = "slider-row";
+    row.innerHTML = `
+      <div class="slider-label"><span>${label}</span><span class="slV">${cur[k]}</span></div>
+      <input type="range" min="${step.min}" max="${step.max}" value="${cur[k]}" data-k="${k}">
+    `;
+    parent.appendChild(row);
+  });
+  parent.querySelectorAll('input[type="range"]').forEach(inp => {
+    inp.addEventListener("input", () => {
+      const k = inp.dataset.k;
+      state[step.key][k] = +inp.value;
+      inp.parentNode.parentNode.querySelector(".slV").textContent = inp.value;
+    });
+  });
+}
+
+/* ----- body silhouette ----- */
+function renderBody(parent, step) {
+  const zones = ["Testa", "Gola", "Petto", "Pancia", "Schiena", "Braccia/Gambe", "Ovunque", "Non la trovo"];
+  const wrap = document.createElement("div");
+  wrap.className = "body-zones";
+  zones.forEach(z => {
+    const btn = document.createElement("button");
+    btn.className = "body-zone";
+    btn.type = "button";
+    btn.textContent = z;
+    if (state[step.key] === z) btn.classList.add("selected");
+    btn.addEventListener("click", () => {
+      state[step.key] = state[step.key] === z ? null : z;
+      renderStep();
+    });
+    wrap.appendChild(btn);
+  });
+  parent.appendChild(wrap);
+}
+
+/* ----- text + Anmy + ricorrenza ----- */
+function renderText(parent, step) {
+  const ta = document.createElement("textarea");
+  ta.placeholder = "Scrivi liberamente…";
+  ta.value = state[step.key] || "";
+  ta.addEventListener("input", () => {
+    state[step.key] = ta.value;
+    updateAnmy();
+    updateNavButtons();
+  });
+  parent.appendChild(ta);
+
+  // Anmy mirror
+  const anmy = document.createElement("div");
+  anmy.className = "anmy";
+  anmy.id = "anmyBlock";
+  parent.appendChild(anmy);
+
+  // Ricorrenza
+  const recurDiv = document.createElement("div");
+  recurDiv.style.marginTop = "10px";
+  recurDiv.innerHTML = `<div class="flow-question" style="font-size:15px;margin-top:14px;">${step.recurrenceQuestion}</div>`;
+  const opts = document.createElement("div");
+  opts.className = "options grid-3";
+  ["Sì", "No", "Non lo so"].forEach(v => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "option";
+    if (state.ricorrenza === v) b.classList.add("selected");
+    b.innerHTML = `<span class="option-label">${v}</span>`;
+    b.addEventListener("click", () => {
+      state.ricorrenza = state.ricorrenza === v ? null : v;
+      renderStep();
+    });
+    opts.appendChild(b);
+  });
+  recurDiv.appendChild(opts);
+  parent.appendChild(recurDiv);
+
+  // Avviso collegamento obbligatorio
+  if (isLinkRequired(currentSphere, state)) {
+    const link = document.createElement("div");
+    link.className = "anmy";
+    link.style.background = "linear-gradient(135deg, rgba(255,210,180,0.4), rgba(255,180,180,0.3))";
+    link.style.borderLeftColor = "rgba(180, 80, 60, 0.6)";
+    link.innerHTML = `
+      <div class="anmy-name">collegamento da chiudere</div>
+      <div class="anmy-text">${getLinkPrompt(currentSphere, state)}</div>
+    `;
+    parent.appendChild(link);
+  }
+}
+
+function getLinkPrompt(sphere, state) {
+  if (sphere === "azioni" && state.tipo === "frutteto")
+    return "Un frutto si raccoglie sempre per qualcuno. Quando potrai, apri la bolla Contesto e collega questa azione alla persona o al gruppo a cui era diretta.";
+  if (sphere === "contesto" && state.tipo === "persona" && state.qualita === "tensione")
+    return "Una tensione relazionale lascia sempre un'eco emotiva. Quando potrai, apri la bolla Emozioni e nota cosa è scorso nel ruscello.";
+  if (sphere === "contesto" && state.tipo === "persona" && state.qualita === "distanza")
+    return "Una distanza ha sempre una qualità affettiva. Quando potrai, apri la bolla Emozioni e dalle una forma.";
+  if (sphere === "contesto" && state.qualita === "ricorrenza")
+    return "Una sensazione di ricorrenza pesante chiede uno sguardo in più. Apri Emozioni o Pensieri e annota cosa accompagna questo luogo.";
+  return "";
+}
+
+function updateAnmy() {
+  const block = document.getElementById("anmyBlock");
+  if (!block) return;
+  const text = state.testo || "";
+  if (!text.trim()) {
+    block.innerHTML = `<div class="anmy-name">Anmy</div><div class="anmy-text">Quando inizi a scrivere, ti restituisco le tue parole con la cornice che hai costruito.</div>`;
+    return;
+  }
+  block.innerHTML = `
+    <div class="anmy-name">Anmy</div>
+    <div class="anmy-text">${buildMirror()}</div>
+  `;
+}
+
+function buildMirror() {
+  const conf = SPHERES[currentSphere];
+  const parts = [];
+  // Frase principale dipende dalla sfera
+  if (currentSphere === "pensieri") {
+    const tipo = state.tipo === "arrivato" ? "ti è arrivato" : "hai costruito tu";
+    const q = state.qualita ? labelOf("pensieri", "qualita", state.qualita) : null;
+    parts.push(`Hai annotato un pensiero che ${tipo}${q ? `, con la forma di una ${q.toLowerCase()}` : ""}.`);
+    if (state.sfumatura) parts.push(`L'hai chiamato ${state.sfumatura}.`);
+    if (state.tempo) parts.push(`Si muove ${state.tempo === 'da_un_po' ? "da un po'" : state.tempo}.`);
+    if (state.ambito && state.ambito.length) parts.push(`Riguarda: ${state.ambito.join(", ")}.`);
+  } else if (currentSphere === "emozioni") {
+    const tipo = state.tipo === "onda" ? "un'onda" : "un clima";
+    const q = state.qualita ? labelOf("emozioni", "qualita", state.qualita) : null;
+    parts.push(`Hai descritto ${tipo}${q ? ` come ${q.toLowerCase()}` : ""}.`);
+    if (state.sfumatura) parts.push(`Le hai dato il nome di ${state.sfumatura.toLowerCase()}.`);
+    if (state.felt_sense) parts.push(`Nel corpo: ${state.felt_sense.toLowerCase()}.`);
+    if (state.intensita) parts.push(`Intensità: ${state.intensita} su 5.`);
+  } else if (currentSphere === "azioni") {
+    const tipo = state.tipo ? `nel ${labelOf("azioni", "tipo", state.tipo)}` : "";
+    const q = state.qualita ? labelOf("azioni", "qualita", state.qualita) : null;
+    parts.push(`Hai piantato ${q ? `un ${q.toLowerCase()}` : "un'azione"} ${tipo}.`);
+    if (state.sfumatura) parts.push(`L'hai vissuta come "${state.sfumatura.toLowerCase()}".`);
+    if (state.energia) parts.push(`Costo ${state.energia.costo}, ritorno ${state.energia.ritorno}.`);
+  } else if (currentSphere === "contesto") {
+    const tipo = state.tipo === "persona" ? "una persona" : "un ambiente";
+    const q = state.qualita ? labelOf("contesto", "qualita", state.qualita) : null;
+    parts.push(`Hai annotato ${tipo}${q ? `, qualità ${q}` : ""}.`);
+    if (state.sfumatura) parts.push(`Sfumatura: ${state.sfumatura.toLowerCase()}.`);
+    if (state.ancoraggio) parts.push(`Nel villaggio: ${labelOf("contesto", "ancoraggio", state.ancoraggio).toLowerCase()}.`);
+  }
+  parts.push(`Le tue parole: «${escapeHtml((state.testo || "").trim()).slice(0, 220)}${(state.testo || "").length > 220 ? "…" : ""}»`);
+  return parts.join(" ");
+}
+
+function labelOf(sphere, key, value) {
+  const conf = SPHERES[sphere];
+  for (const step of conf.steps) {
+    if (step.key !== key) continue;
+    let opts = step.options;
+    if (step.optionsBy) opts = step.optionsBy[state.tipo] || [];
+    if (!opts) continue;
+    const found = opts.find(o => o.value === value);
+    if (found) return found.label;
+  }
+  return value;
+}
+
+function escapeHtml(s) {
+  return s.replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+
+/* ==========================================================
+   NAVIGAZIONE
+   ========================================================== */
+btnBack.addEventListener("click", () => {
+  if (currentStep === 0) {
+    closeSphere();
+  } else {
+    currentStep--;
+    renderStep();
+  }
+});
+
+btnNext.addEventListener("click", () => {
+  const conf = SPHERES[currentSphere];
+  const step = conf.steps[currentStep];
+  if (!isStepValid(step)) return;
+  if (currentStep < conf.steps.length - 1) {
+    currentStep++;
+    renderStep();
+  } else {
+    saveVoice();
+  }
+});
+
+function isStepValid(step) {
+  if (step.optional) return true;
+  const v = state[step.key];
+  if (step.kind === "text") {
+    return !!(v && v.trim().length > 0) && !!state.ricorrenza;
+  }
+  if (step.kind === "slider") return v != null;
+  if (step.kind === "double-slider") return v && v.costo != null && v.ritorno != null;
+  if (Array.isArray(v)) return v.length > 0;
+  return v != null && v !== "";
+}
+
+function updateNavButtons() {
+  const conf = SPHERES[currentSphere];
+  const step = conf.steps[currentStep];
+  btnNext.disabled = !isStepValid(step);
+  btnBack.textContent = currentStep === 0 ? "Chiudi" : "Indietro";
+}
+
+/* ==========================================================
+   SALVATAGGIO (locale, in memoria)
+   ========================================================== */
+const voices = JSON.parse(localStorage.getItem("risonanza_voices") || "[]");
+
+function saveVoice() {
+  const voice = {
+    id: Date.now(),
+    sphere: currentSphere,
+    state: { ...state },
+    createdAt: new Date().toISOString()
+  };
+  voices.push(voice);
+  try { localStorage.setItem("risonanza_voices", JSON.stringify(voices)); } catch (e) {}
+  voiceCount = voices.length;
+  showToast("Voce salvata nel Villaggio");
+  closeSphere();
+}
+
+function showToast(msg) {
+  toastEl.textContent = msg;
+  toastEl.classList.add("show");
+  setTimeout(() => toastEl.classList.remove("show"), 2400);
+}
+</script>
 </body>
 </html>
